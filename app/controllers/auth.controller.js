@@ -7,10 +7,12 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
+  const { body } = req;
+  const { username, password, email, roles } = body;
   const user = new User({
-    username: req.body.username,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8),
+    username,
+    email,
+    password: bcrypt.hashSync(password, 8),
   });
 
   user.save((err, user) => {
@@ -22,10 +24,10 @@ exports.signup = (req, res) => {
       return;
     }
 
-    if (req.body.roles) {
+    if (roles) {
       Role.find(
         {
-          name: { $in: req.body.roles },
+          name: { $in: roles },
         },
         (err, roles) => {
           if (err) {
@@ -84,8 +86,10 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
+  const { body } = req;
+  const { username, password } = body;
   User.findOne({
-    username: req.body.username,
+    username,
   })
     .populate("roles", "-__v")
     .exec((err, user) => {
@@ -104,10 +108,7 @@ exports.signin = (req, res) => {
         });
       }
 
-      const passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password,
-      );
+      const passwordIsValid = bcrypt.compareSync(password, user.password);
 
       if (!passwordIsValid) {
         return res.status(401).send({
@@ -128,11 +129,13 @@ exports.signin = (req, res) => {
       }
       res.status(200).send({
         success: true,
-        id: user._id,
-        username: user.username,
-        email: user.email,
+        id: user._id || null,
+        username: user.username || null,
+        email: user.email || null,
         roles: authorities,
         accessToken: token,
+        birthDay: user.birthDay || null,
+        phoneNumber: user.phoneNumber || null,
       });
     });
 };
