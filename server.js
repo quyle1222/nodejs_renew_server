@@ -35,6 +35,7 @@ db.mongoose
 
 require("./app/routers/auth.routes")(app);
 require("./app/routers/user.routes")(app);
+require("./app/routers/homestay.routers")(app);
 
 // simple route
 app.get("/", (req, res) => {

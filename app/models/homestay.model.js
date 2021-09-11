@@ -1,33 +1,28 @@
 const mongoose = require("mongoose");
 
-const User = mongoose.model(
-  "User",
+const HomeStay = mongoose.model(
+  "HomeStay",
   new mongoose.Schema({
-    username: {
+    nameHomeStay: {
       type: String,
       trim: true,
       required: true,
       maxlength: 32,
     },
-    email: {
-      type: String,
+    priceHour: {
+      type: Number,
       trim: true,
       required: true,
       maxlength: 32,
     },
-    password: {
-      type: String,
+    priceDay: {
+      type: Number,
       trim: true,
       required: true,
       maxlength: 32,
     },
-    roles: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role",
-      },
-    ],
+    city: String,
   }),
 );
 
-module.exports = User;
+module.exports = HomeStay;
