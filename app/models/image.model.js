@@ -1,12 +1,22 @@
 const mongoose = require("mongoose");
 module.exports = new mongoose.model(
-  "Image",
+  "Photos.file",
   new mongoose.Schema({
-    name: String,
-    desc: String,
-    img: {
-      data: Buffer,
-      contentType: String,
+    length: Number,
+    chunkSize: Number,
+    uploadDate: Date,
+    filename: String,
+    contentType: String,
+  }),
+);
+module.exports = new mongoose.model(
+  "Photos.chunk",
+  new mongoose.Schema({
+    files_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Photos.file",
+      required: true,
     },
+    data: Buffer,
   }),
 );

@@ -17,6 +17,7 @@ app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 app.set("view engine", "ejs");
 db.mongoose
   // .connect(`mongodb://localhost:27017/test`, {
@@ -36,7 +37,7 @@ db.mongoose
 require("./app/routers/auth.routes")(app);
 require("./app/routers/user.routes")(app);
 require("./app/routers/homestay.routes")(app);
-require("./app/routers/image.routes")(app);
+require("./app/routers/file.routes")(app);
 
 // simple route
 app.get("/", (req, res) => {
