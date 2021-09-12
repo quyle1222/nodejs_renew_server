@@ -26,7 +26,7 @@ exports.findListHomeStayById = (req, res) => {
   const { query } = req;
   const { userId } = query;
 
-  HomeStay.find({ owner: userId }).exec((err, response) => {
+  HomeStay.find(query).exec((err, response) => {
     if (err) {
       res.status(500).send({
         success: false,
@@ -34,13 +34,7 @@ exports.findListHomeStayById = (req, res) => {
       });
       return;
     }
-    if (!userId) {
-      res.status(400).send({
-        success: false,
-        message: "Don't have userId",
-      });
-      return;
-    }
+
     res.status(200).send({
       listHomeStay: response,
       success: true,

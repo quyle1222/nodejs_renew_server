@@ -5,7 +5,6 @@ const db = require("./app/models");
 const app = express();
 const dbConfig = require("./app/config/db.config");
 const Role = db.role;
-const bearerToken = require("express-bearer-token");
 
 const corsOptions = {
   origin: "http://localhost:8888",
