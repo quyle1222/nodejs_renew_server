@@ -20,7 +20,15 @@ const HomeStay = mongoose.model(
     },
     city: {
       type: String,
-      trim: true,
+      required: true,
+    },
+    address: {
+      required: true,
+      type: String,
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
   }),

@@ -21,3 +21,55 @@ exports.getListHomeStay = (req, res) => {
     });
   });
 };
+
+exports.findListHomeStayById = (req, res) => {
+  const { query } = req;
+  const { userId } = query;
+
+  HomeStay.find({ owner: userId }).exec((err, response) => {
+    if (err) {
+      res.status(500).send({
+        success: false,
+        message: err,
+      });
+      return;
+    }
+    if (!userId) {
+      res.status(500).send({
+        success: false,
+        message: "Error",
+      });
+      return;
+    }
+    res.status(200).send({
+      listHomeStay: response,
+      success: true,
+    });
+  });
+};
+
+exports.createHomeStay = (req, res) => {
+  const { userId, body } = req;
+  const { nameHomeStay, priceHour, priceDay, city, address } = body;
+  const homeStay = new HomeStay({
+    nameHomeStay,
+    priceDay,
+    priceHour,
+    city,
+    address,
+    owner: userId,
+  });
+  homeStay.save((err, homestay) => {
+    if (err) {
+      res.status(500).send({
+        success: false,
+        message: err,
+      });
+      return;
+    }
+    res.status(200).send({
+      data: homestay,
+      success: true,
+    });
+  });
+};
