@@ -1,5 +1,5 @@
 const { authJwt } = require("../middlewares");
-const controller = require("../controllers/homestay.controller");
+const controller = require("../controllers/image.controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -9,9 +9,5 @@ module.exports = function (app) {
     );
     next();
   });
-  app.get(
-    "/api/get/homestay",
-    [authJwt.verifyToken],
-    controller.getListHomeStay,
-  );
+  app.post("/api/upload/image", [authJwt.verifyToken], controller.updateImage);
 };

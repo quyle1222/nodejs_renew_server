@@ -5,6 +5,7 @@ const db = require("./app/models");
 const app = express();
 const dbConfig = require("./app/config/db.config");
 const Role = db.role;
+const bearerToken = require("express-bearer-token");
 
 const corsOptions = {
   origin: "http://localhost:8888",
@@ -13,11 +14,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
-app.use(bodyParser.json());
+app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(express.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
 db.mongoose
   // .connect(`mongodb://localhost:27017/test`, {
   .connect(`${dbConfig.DB}`, {
@@ -35,7 +36,7 @@ db.mongoose
 
 require("./app/routers/auth.routes")(app);
 require("./app/routers/user.routes")(app);
-require("./app/routers/homestay.routers")(app);
+require("./app/routers/homestay.routes")(app);
 
 // simple route
 app.get("/", (req, res) => {

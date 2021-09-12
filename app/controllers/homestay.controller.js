@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 exports.getListHomeStay = (req, res) => {
-  HomeStay.find({}).exec((err, response) => {
+  HomeStay.find().exec((err, response) => {
     if (err) {
       res.status(500).send({
         success: false,

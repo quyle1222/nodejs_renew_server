@@ -100,16 +100,13 @@ exports.signin = (req, res) => {
         });
         return;
       }
-
       if (!user) {
         return res.status(404).send({
           success: false,
           message: "User Not found.",
         });
       }
-
       const passwordIsValid = bcrypt.compareSync(password, user.password);
-
       if (!passwordIsValid) {
         return res.status(401).send({
           success: false,
@@ -117,13 +114,10 @@ exports.signin = (req, res) => {
           message: "Invalid Password!",
         });
       }
-
       const token = jwt.sign({ id: user.id }, config.secret, {
         expiresIn: 86400, // 24 hours
       });
-
       const authorities = [];
-
       for (let i = 0; i < user.roles.length; i++) {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }

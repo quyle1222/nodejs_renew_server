@@ -7,26 +7,28 @@ const User = mongoose.model(
       type: String,
       trim: true,
       required: true,
-      maxlength: 32,
     },
     email: {
       type: String,
       trim: true,
       required: true,
-      maxlength: 32,
     },
     password: {
       type: String,
       trim: true,
       required: true,
-      maxlength: 32,
     },
     roles: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Role",
+        required: true,
       },
     ],
+    token: {
+      type: String,
+      trim: true,
+    },
   }),
 );
 

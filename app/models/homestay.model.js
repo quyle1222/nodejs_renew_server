@@ -7,21 +7,22 @@ const HomeStay = mongoose.model(
       type: String,
       trim: true,
       required: true,
-      maxlength: 32,
     },
     priceHour: {
       type: Number,
       trim: true,
       required: true,
-      maxlength: 32,
     },
     priceDay: {
       type: Number,
       trim: true,
       required: true,
-      maxlength: 32,
     },
-    city: String,
+    city: {
+      type: String,
+      trim: true,
+      required: true,
+    },
   }),
 );
 
