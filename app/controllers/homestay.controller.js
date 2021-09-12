@@ -35,9 +35,9 @@ exports.findListHomeStayById = (req, res) => {
       return;
     }
     if (!userId) {
-      res.status(500).send({
+      res.status(400).send({
         success: false,
-        message: "Error",
+        message: "Don't have userId",
       });
       return;
     }
