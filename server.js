@@ -38,6 +38,7 @@ require("./app/routers/auth.routes")(app);
 require("./app/routers/user.routes")(app);
 require("./app/routers/homestay.routes")(app);
 require("./app/routers/file.routes")(app);
+require("./app/routers/firebase.routes")(app);
 
 // simple route
 app.get("/", (req, res) => {
@@ -60,7 +61,6 @@ const initial = () => {
         if (err) {
           console.log("error", err);
         }
-
         console.log("added 'user' to roles collection");
       });
 
@@ -80,7 +80,6 @@ const initial = () => {
         if (err) {
           console.log("error", err);
         }
-
         console.log("added 'admin' to roles collection");
       });
     }
