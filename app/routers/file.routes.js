@@ -10,5 +10,5 @@ module.exports = function (app) {
     );
     next();
   });
-  app.post("/api/upload/image", upload.single("file"), controller.uploadFile);
+  app.post("/api/upload/image", upload.single("file"), controller.uploadImage);
 };
