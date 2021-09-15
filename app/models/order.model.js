@@ -6,6 +6,7 @@ const Order = mongoose.model(
     shipper: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shipper",
+      default: null,
     },
     branchName: {
       type: String,

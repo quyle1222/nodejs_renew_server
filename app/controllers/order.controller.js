@@ -59,6 +59,7 @@ const createOrder = (req, res) => {
     longitudeBranch,
     latitudeCustomer,
     longitudeCustomer,
+    "K",
   );
 
   const goods_fee = calculatorGoods(listOrderProductDTOs);
@@ -83,10 +84,11 @@ const createOrder = (req, res) => {
       });
       return;
     }
-    const messageSendOrder = sendOrderToShipper(response);
+    console.log("response", response);
+    sendOrderToShipper(response);
     res.send({
       success: true,
-      message: messageSendOrder,
+      message: "Tạo đơn hàng thành công , đang xử lý",
       data: response,
     });
   });
@@ -99,28 +101,33 @@ const sendOrderToShipper = (order) => {
     lon: longitudeBranch,
   };
   Shipper.find().exec((err, response) => {
-    const arrayShipper = [];
-
+    let arrayShipper = [];
     response.forEach((item) => {
       const { latitude, longitude } = item.location;
-      const p2 = {
-        lat: latitude,
-        lon: longitude,
-      };
-      if (distance(p2, p1) < 2) {
+
+      const distanceShipper = distance(
+        latitudeBranch,
+        longitudeBranch,
+        latitude,
+        longitude,
+        "K",
+      );
+
+      if (distanceShipper < 3) {
         arrayShipper.push(item);
       }
     });
 
     if (arrayShipper.length === 0) {
-      return "Hiện tại không có shipper";
+      console.log("Hiện tại không có shipper");
     } else {
       const max = arrayShipper.length - 1;
       const min = 0;
-      const index = Math.random() * (max - min) + min;
+      const index = Math.floor(Math.random() * (max - min) + min);
+
       const token = arrayShipper[index].tokenFireBase;
       firebase.sendOrder(token, order);
-      return "Đang tìm kiếm shipper";
+      console.log("Đang tìm shipper");
     }
   });
 };

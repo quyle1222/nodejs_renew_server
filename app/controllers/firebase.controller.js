@@ -32,7 +32,9 @@ const sendNotification = (req, res) => {
 const sendOrder = (token, order) => {
   const registrationToken = token;
   const message = {
-    data: order,
+    data: {
+      orderId: order._id.toString(),
+    },
     notification: {
       title: "Chúc mừng",
       body: "Bạn đã có đơn hàng mới",
@@ -42,19 +44,14 @@ const sendOrder = (token, order) => {
     priority: "high",
     timeToLive: 60 * 60 * 24,
   };
-
-  admin
-    .messaging()
-    .sendToDevice(registrationToken, message, options)
-    .then((response) => {
-      console.log(response);
-      res
-        .status(200)
-        .send({ mess: "Notification sent successfully", success: true });
-    })
-    .catch((error) => {
-      res.status(500).send({ mess: "Notification sent fail", success: false });
-    });
+  try {
+    admin
+      .messaging()
+      .sendToDevice(registrationToken, message, options)
+      .then((res) => {
+        console.log(res);
+      });
+  } catch (error) {}
 };
 
 module.exports = {
