@@ -19,15 +19,20 @@ const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
-    return res.status(403).send({ message: "No token provided!" });
+    return res.status(403).send({
+      message: "No token provided!",
+      success: false,
+    });
   }
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
-      return res.status(401).send({ message: "Unauthorized!" });
+      return res.status(401).send({
+        message: "Unauthorized!",
+        success: false,
+      });
     }
     req.userId = decoded.id;
-
     next();
   });
 };
@@ -98,6 +103,5 @@ const authJwt = {
   verifyToken,
   isAdmin,
   isModerator,
-  upload,
 };
 module.exports = authJwt;

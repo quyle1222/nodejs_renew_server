@@ -4,9 +4,38 @@ const dbConfig = require("../config/db.config");
 const sendNotification = (req, res) => {
   const registrationToken = dbConfig.TOKEN_FIREBASE_DEVICES;
   const message = {
+    data: { score: "850", time: "2:45" },
     notification: {
-      title: "enter_subject_of_notification_here",
-      body: "enter_message_here",
+      title: "Chúc mừng",
+      body: "Bạn đã có đơn hàng mới",
+    },
+  };
+  const options = {
+    priority: "high",
+    timeToLive: 60 * 60 * 24,
+  };
+
+  admin
+    .messaging()
+    .sendToDevice(registrationToken, message, options)
+    .then((response) => {
+      console.log(response);
+      res
+        .status(200)
+        .send({ mess: "Notification sent successfully", success: true });
+    })
+    .catch((error) => {
+      res.status(500).send({ mess: "Notification sent fail", success: false });
+    });
+};
+
+const sendOrder = (token, order) => {
+  const registrationToken = token;
+  const message = {
+    data: order,
+    notification: {
+      title: "Chúc mừng",
+      body: "Bạn đã có đơn hàng mới",
     },
   };
   const options = {
@@ -30,4 +59,5 @@ const sendNotification = (req, res) => {
 
 module.exports = {
   sendNotification,
+  sendOrder,
 };

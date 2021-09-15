@@ -39,6 +39,8 @@ require("./app/routers/user.routes")(app);
 require("./app/routers/homestay.routes")(app);
 require("./app/routers/file.routes")(app);
 require("./app/routers/firebase.routes")(app);
+require("./app/routers/shipper.routes")(app);
+require("./app/routers/order.routes")(app);
 
 // simple route
 app.get("/", (req, res) => {
