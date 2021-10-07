@@ -85,7 +85,7 @@ const Order = mongoose.model(
       default: null,
       required: true,
     },
-    orderQuanity: {
+    orderQuantity: {
       type: Number,
       default: 0,
       required: true,

@@ -1,5 +1,6 @@
 const config = require("../config/auth.config");
 const db = require("../models");
+const Constant = require("../utils/Constant");
 
 const Shipper = db.shipper;
 const Order = db.order;
@@ -117,7 +118,6 @@ const convertToTime = (date) => {
 
 const handleStatistical = (listOrder) => {
   const array = Array(24).fill(0);
-
   if (listOrder && listOrder.length > 0) {
     listOrder.forEach((order) => {
       const completionTime = convertToTime(order.completionTime);
@@ -141,7 +141,7 @@ const getStatistical = async (req, res) => {
   Order.find({
     shipperId,
     dateIn: dateIn || day,
-    status: "ORDER_COMPLETED",
+    status: Constant.ORDER_COMPLETED,
   }).exec((err, order) => {
     const arrayPrice = handleStatistical(order);
     if (err) {
@@ -188,9 +188,38 @@ const getStatistical = async (req, res) => {
   });
 };
 
+const approvedOrder = async (req, res) => {
+  const { body, userId } = req;
+  const { orderId, isApproved } = body;
+
+  if (isApproved) {
+    const newData = {
+      shipper: userId,
+      status: Constant.ORDER_APPROVED,
+    };
+    Order.findOneAndUpdate({ _id: orderId }, newData, {
+      useFindAndModify: false,
+      new: true,
+    }).exec((err, order) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: "Đã xảy ra lỗi",
+        });
+      }
+      return res.status(200).send({
+        success: true,
+        message: "Đã chấp nhận đơn hàng",
+        data: order,
+      });
+    });
+  }
+};
+
 module.exports = {
   signUp,
   signIn,
   getInfo,
   getStatistical,
+  approvedOrder,
 };

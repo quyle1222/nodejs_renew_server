@@ -8,7 +8,13 @@ module.exports = function (app) {
       "authorization, Origin, Content-Type, Accept",
     );
     next();
-
-    app.post("/api/v1/createOrder", controller.createOrder);
   });
+
+  app.post("/api/v1/createOrder", controller.createOrder);
+
+  app.get(
+    "api/v1/getOrderProcessing",
+    authJwt.verifyToken,
+    controller.getOrderProcessingOfShipper,
+  );
 };

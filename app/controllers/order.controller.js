@@ -1,8 +1,8 @@
-const config = require("../config/auth.config");
 const db = require("../models");
 const Order = db.order;
 const Shipper = db.shipper;
 const firebase = require("./firebase.controller");
+const Constant = require("../utils/Constant");
 
 const distance = (lat1, lon1, lat2, lon2, unit) => {
   var radlat1 = (Math.PI * lat1) / 180;
@@ -44,6 +44,14 @@ const calculatorShippingFee = (distanceBranch) => {
   }
 };
 
+const calculatorOrderQuantity = (listOrderProductDTOs) => {
+  let sum = 0;
+  listOrderProductDTOs.forEach((item) => {
+    sum += item.quantityProduct;
+  });
+  return sum;
+};
+
 const createOrder = (req, res) => {
   const { body } = req;
   const {
@@ -61,12 +69,12 @@ const createOrder = (req, res) => {
     longitudeCustomer,
     "K",
   );
-
   const goods_fee = calculatorGoods(listOrderProductDTOs);
   const shipping_fee = calculatorShippingFee(distanceBranch);
-  const status = "ORDER_CREATE";
+  const status = Constant.ORDER_CREATE;
   const receivingTime = new Date();
-
+  const quantityProduct = calculatorOrderQuantity(listOrderProductDTOs);
+  body.quantityProduct = quantityProduct;
   body.goods_fee = goods_fee;
   body.shipping_fee = shipping_fee;
   body.total_fee = goods_fee + shipping_fee;
@@ -84,7 +92,6 @@ const createOrder = (req, res) => {
       });
       return;
     }
-    console.log("response", response);
     sendOrderToShipper(response);
     res.send({
       success: true,
@@ -104,7 +111,6 @@ const sendOrderToShipper = (order) => {
     let arrayShipper = [];
     response.forEach((item) => {
       const { latitude, longitude } = item.location;
-
       const distanceShipper = distance(
         latitudeBranch,
         longitudeBranch,
@@ -112,19 +118,16 @@ const sendOrderToShipper = (order) => {
         longitude,
         "K",
       );
-
       if (distanceShipper < 3) {
         arrayShipper.push(item);
       }
     });
-
     if (arrayShipper.length === 0) {
       console.log("Hiện tại không có shipper");
     } else {
       const max = arrayShipper.length - 1;
       const min = 0;
       const index = Math.floor(Math.random() * (max - min) + min);
-
       const token = arrayShipper[index].tokenFireBase;
       firebase.sendOrder(token, order);
       console.log("Đang tìm shipper");
@@ -132,6 +135,24 @@ const sendOrderToShipper = (order) => {
   });
 };
 
+const getOrderProcessingOfShipper = (req, res) => {
+  const { userId } = req;
+  Order.find({ shipper: userId }).exec((error, response) => {
+    console.log("response", response);
+    if (err) {
+      return res.status(500).send({
+        success: false,
+        message: err,
+      });
+    }
+    res.send({
+      success: true,
+      data: response,
+    });
+  });
+};
+
 module.exports = {
   createOrder,
+  getOrderProcessingOfShipper,
 };

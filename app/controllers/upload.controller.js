@@ -13,7 +13,6 @@ const uploadImage = (req, res, next) => {
           reject(error);
         }
       });
-
       streamifier.createReadStream(req.file.buffer).pipe(stream);
     });
   };
