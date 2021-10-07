@@ -1,8 +1,8 @@
-const { verifySignUp, authJwt } = require("../middlewares");
+const { authJwt } = require("../middlewares");
 const controller = require("../controllers/order.controller");
 
-module.exports = function (app) {
-  app.use(function (req, res, next) {
+module.exports = function(app) {
+  app.use(function(req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
       "authorization, Origin, Content-Type, Accept",
@@ -13,8 +13,13 @@ module.exports = function (app) {
   app.post("/api/v1/createOrder", controller.createOrder);
 
   app.get(
-    "api/v1/getOrderProcessing",
-    authJwt.verifyToken,
+    "/api/v1/getOrderProcessing",
+    [authJwt.verifyToken],
     controller.getOrderProcessingOfShipper,
+  );
+  app.get(
+    "/api/v1/getOrderComplete",
+    [authJwt.verifyToken],
+    controller.getOrderOfShipper,
   );
 };

@@ -5,15 +5,15 @@ const firebase = require("./firebase.controller");
 const Constant = require("../utils/Constant");
 
 const distance = (lat1, lon1, lat2, lon2, unit) => {
-  var radlat1 = (Math.PI * lat1) / 180;
-  var radlat2 = (Math.PI * lat2) / 180;
+  var radlat1 = Math.PI * lat1 / 180;
+  var radlat2 = Math.PI * lat2 / 180;
   var theta = lon1 - lon2;
-  var radtheta = (Math.PI * theta) / 180;
+  var radtheta = Math.PI * theta / 180;
   var dist =
     Math.sin(radlat1) * Math.sin(radlat2) +
     Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
   dist = Math.acos(dist);
-  dist = (dist * 180) / Math.PI;
+  dist = dist * 180 / Math.PI;
   dist = dist * 60 * 1.1515;
   if (unit == "K") {
     dist = dist * 1.609344;
@@ -24,29 +24,29 @@ const distance = (lat1, lon1, lat2, lon2, unit) => {
   return dist;
 };
 
-const calculatorGoods = (listOrderProductDTOs) => {
+const calculatorGoods = listOrderProductDTOs => {
   let sum = 0;
-  listOrderProductDTOs.forEach((item) => {
+  listOrderProductDTOs.forEach(item => {
     sum += item.finishPriceProduct;
   });
   return sum;
 };
 
-const calculatorShippingFee = (distanceBranch) => {
+const calculatorShippingFee = distanceBranch => {
   const sum = 0;
   if (distanceBranch <= 2.5) {
     return 25000;
   } else {
-    const km = (distanceBranch / 10) * 10000;
-    const meters = (distanceBranch % 10) * 10000;
+    const km = distanceBranch / 10 * 10000;
+    const meters = distanceBranch % 10 * 10000;
     sum = km + meters;
     return sum;
   }
 };
 
-const calculatorOrderQuantity = (listOrderProductDTOs) => {
+const calculatorOrderQuantity = listOrderProductDTOs => {
   let sum = 0;
-  listOrderProductDTOs.forEach((item) => {
+  listOrderProductDTOs.forEach(item => {
     sum += item.quantityProduct;
   });
   return sum;
@@ -101,7 +101,7 @@ const createOrder = (req, res) => {
   });
 };
 
-const sendOrderToShipper = (order) => {
+const sendOrderToShipper = order => {
   const { latitudeBranch, longitudeBranch } = order;
   const p1 = {
     lat: latitudeBranch,
@@ -109,7 +109,7 @@ const sendOrderToShipper = (order) => {
   };
   Shipper.find().exec((err, response) => {
     let arrayShipper = [];
-    response.forEach((item) => {
+    response.forEach(item => {
       const { latitude, longitude } = item.location;
       const distanceShipper = distance(
         latitudeBranch,
@@ -137,17 +137,44 @@ const sendOrderToShipper = (order) => {
 
 const getOrderProcessingOfShipper = (req, res) => {
   const { userId } = req;
-  Order.find({ shipper: userId }).exec((error, response) => {
-    console.log("response", response);
+  Order.find({ shipper: userId }).exec((err, response) => {
+    let arrayOrder = [];
     if (err) {
       return res.status(500).send({
         success: false,
+
         message: err,
       });
     }
+    response.map(item => {
+      item.status !== Constant.ORDER_COMPLETED ? arrayOrder.push(item) : null;
+    });
     res.send({
+      message: null,
       success: true,
-      data: response,
+      data: arrayOrder,
+    });
+  });
+};
+
+const getOrderOfShipper = (req, res) => {
+  const { userId } = req;
+  Order.find({ shipper: userId }).exec((err, response) => {
+    let arrayOrder = [];
+    if (err) {
+      return res.status(500).send({
+        success: false,
+
+        message: err,
+      });
+    }
+    response.map(item => {
+      item.status === Constant.ORDER_COMPLETED ? arrayOrder.push(item) : null;
+    });
+    res.send({
+      message: null,
+      success: true,
+      data: arrayOrder,
     });
   });
 };
@@ -155,4 +182,5 @@ const getOrderProcessingOfShipper = (req, res) => {
 module.exports = {
   createOrder,
   getOrderProcessingOfShipper,
+  getOrderOfShipper,
 };

@@ -9,6 +9,7 @@ module.exports = function (app) {
     );
     next();
   });
+
   app.get(
     "/api/get/homestayAll",
     [authJwt.verifyToken],
