@@ -5,48 +5,43 @@ const firebase = require("./firebase.controller");
 const Constant = require("../utils/Constant");
 
 const distance = (lat1, lon1, lat2, lon2, unit) => {
-  var radlat1 = Math.PI * lat1 / 180;
-  var radlat2 = Math.PI * lat2 / 180;
-  var theta = lon1 - lon2;
-  var radtheta = Math.PI * theta / 180;
-  var dist =
+  const radlat1 = (Math.PI * lat1) / 180;
+  const radlat2 = (Math.PI * lat2) / 180;
+  const theta = lon1 - lon2;
+  const radtheta = (Math.PI * theta) / 180;
+  const dist =
     Math.sin(radlat1) * Math.sin(radlat2) +
     Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
   dist = Math.acos(dist);
-  dist = dist * 180 / Math.PI;
+  dist = (dist * 180) / Math.PI;
   dist = dist * 60 * 1.1515;
-  if (unit == "K") {
-    dist = dist * 1.609344;
-  }
-  if (unit == "N") {
-    dist = dist * 0.8684;
-  }
+  dist = dist * 1.609344;
   return dist;
 };
 
-const calculatorGoods = listOrderProductDTOs => {
+const calculatorGoods = (listOrderProductDTOs) => {
   let sum = 0;
-  listOrderProductDTOs.forEach(item => {
+  listOrderProductDTOs.forEach((item) => {
     sum += item.finishPriceProduct;
   });
   return sum;
 };
 
-const calculatorShippingFee = distanceBranch => {
+const calculatorShippingFee = (distanceBranch) => {
   const sum = 0;
   if (distanceBranch <= 2.5) {
     return 25000;
   } else {
-    const km = distanceBranch / 10 * 10000;
-    const meters = distanceBranch % 10 * 10000;
+    const km = (distanceBranch / 10) * 10000;
+    const meters = (distanceBranch % 10) * 10000;
     sum = km + meters;
     return sum;
   }
 };
 
-const calculatorOrderQuantity = listOrderProductDTOs => {
+const calculatorOrderQuantity = (listOrderProductDTOs) => {
   let sum = 0;
-  listOrderProductDTOs.forEach(item => {
+  listOrderProductDTOs.forEach((item) => {
     sum += item.quantityProduct;
   });
   return sum;
@@ -67,7 +62,6 @@ const createOrder = (req, res) => {
     longitudeBranch,
     latitudeCustomer,
     longitudeCustomer,
-    "K",
   );
   const goods_fee = calculatorGoods(listOrderProductDTOs);
   const shipping_fee = calculatorShippingFee(distanceBranch);
@@ -84,100 +78,116 @@ const createOrder = (req, res) => {
   body.timingBranchToCustomer = distanceBranch * 60 * 15;
 
   const order = new Order(body);
-  order.save((err, response) => {
-    if (err) {
-      res.status(500).send({
-        success: false,
-        message: err,
+  try {
+    order.save((err, response) => {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: err,
+        });
+        return;
+      }
+      sendOrderToShipper(response);
+      res.send({
+        success: true,
+        message: "Tạo đơn hàng thành công , đang xử lý",
+        data: response,
       });
-      return;
-    }
-    sendOrderToShipper(response);
-    res.send({
-      success: true,
-      message: "Tạo đơn hàng thành công , đang xử lý",
-      data: response,
     });
-  });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const sendOrderToShipper = order => {
+const sendOrderToShipper = (order) => {
   const { latitudeBranch, longitudeBranch } = order;
   const p1 = {
     lat: latitudeBranch,
     lon: longitudeBranch,
   };
-  Shipper.find().exec((err, response) => {
-    let arrayShipper = [];
-    response.forEach(item => {
-      const { latitude, longitude } = item.location;
-      const distanceShipper = distance(
-        latitudeBranch,
-        longitudeBranch,
-        latitude,
-        longitude,
-        "K",
-      );
-      if (distanceShipper < 3) {
-        arrayShipper.push(item);
+  try {
+    Shipper.find().exec((err, response) => {
+      let arrayShipper = [];
+      response.forEach((item) => {
+        const { latitude, longitude } = item.location;
+        const distanceShipper = distance(
+          latitudeBranch,
+          longitudeBranch,
+          latitude,
+          longitude,
+          "K",
+        );
+        if (distanceShipper < 3) {
+          arrayShipper.push(item);
+        }
+      });
+      if (arrayShipper.length === 0) {
+        console.log("Hiện tại không có shipper");
+      } else {
+        const max = arrayShipper.length - 1;
+        const min = 0;
+        const index = Math.floor(Math.random() * (max - min) + min);
+        const token = arrayShipper[index].tokenFireBase;
+        firebase.sendOrder(token, order);
+        console.log("Đang tìm shipper");
       }
     });
-    if (arrayShipper.length === 0) {
-      console.log("Hiện tại không có shipper");
-    } else {
-      const max = arrayShipper.length - 1;
-      const min = 0;
-      const index = Math.floor(Math.random() * (max - min) + min);
-      const token = arrayShipper[index].tokenFireBase;
-      firebase.sendOrder(token, order);
-      console.log("Đang tìm shipper");
-    }
-  });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const getOrderProcessingOfShipper = (req, res) => {
   const { userId } = req;
-  Order.find({ shipper: userId }).exec((err, response) => {
-    let arrayOrder = [];
-    if (err) {
-      return res.status(500).send({
-        success: false,
-
-        message: err,
+  try {
+    Order.find({ shipper: userId }).exec((err, response) => {
+      let arrayOrder = [];
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: err,
+        });
+      }
+      response.map((item) => {
+        item.status !== Constant.ORDER_COMPLETED ? arrayOrder.push(item) : null;
       });
-    }
-    response.map(item => {
-      item.status !== Constant.ORDER_COMPLETED ? arrayOrder.push(item) : null;
+      res.send({
+        message: null,
+        success: true,
+        data: arrayOrder,
+      });
     });
-    res.send({
-      message: null,
-      success: true,
-      data: arrayOrder,
-    });
-  });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const getOrderOfShipper = (req, res) => {
   const { userId } = req;
-  Order.find({ shipper: userId }).exec((err, response) => {
-    let arrayOrder = [];
-    if (err) {
-      return res.status(500).send({
-        success: false,
+  try {
+    Order.find({ shipper: userId }).exec((err, response) => {
+      let arrayOrder = [];
+      if (err) {
+        return res.status(500).send({
+          success: false,
 
-        message: err,
+          message: err,
+        });
+      }
+      response.map((item) => {
+        item.status === Constant.ORDER_COMPLETED ? arrayOrder.push(item) : null;
       });
-    }
-    response.map(item => {
-      item.status === Constant.ORDER_COMPLETED ? arrayOrder.push(item) : null;
+      res.send({
+        message: null,
+        success: true,
+        data: arrayOrder,
+      });
     });
-    res.send({
-      message: null,
-      success: true,
-      data: arrayOrder,
-    });
-  });
+  } catch (error) {
+    console.log(error);
+  }
 };
+
 
 module.exports = {
   createOrder,

@@ -216,10 +216,24 @@ const approvedOrder = async (req, res) => {
   }
 };
 
+const updateLocationAndStatus = (req, res) => {
+  const { body, userId } = req;
+  const { location } = body;
+  Shipper.findByIdAndUpdate().exec((err, res) => {
+    if (err) {
+      return res.status(500).send({
+        success: false,
+        message: err,
+      });
+    }
+  });
+};
+
 module.exports = {
   signUp,
   signIn,
   getInfo,
   getStatistical,
   approvedOrder,
+  updateLocationAndStatus,
 };

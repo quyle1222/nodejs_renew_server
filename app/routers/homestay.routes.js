@@ -11,19 +11,18 @@ module.exports = function (app) {
   });
 
   app.get(
-    "/api/get/homestayAll",
+    "/api/v1/get/homestayAll",
     [authJwt.verifyToken],
     controller.getListHomeStay,
   );
   app.post(
-    "/api/create/homestay",
+    "/api/v1/create/homestay",
     [authJwt.verifyToken],
     controller.createHomeStay,
   );
-
   ///api/get/homestay?userId=????
   app.get(
-    "/api/get/homestay",
+    "/api/v1/get/homestay",
     [authJwt.verifyToken],
     controller.findListHomeStayById,
   );

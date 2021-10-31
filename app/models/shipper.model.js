@@ -59,6 +59,10 @@ const Shipper = mongoose.model(
       type: Array,
       default: null,
     },
+    avatarURL: {
+      type: String,
+      default: null,
+    },
   }),
 );
 
