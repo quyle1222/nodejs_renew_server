@@ -34,8 +34,6 @@ db.mongoose
   });
 
 require("./app/routers/auth.routes")(app);
-require("./app/routers/user.routes")(app);
-require("./app/routers/homestay.routes")(app);
 require("./app/routers/file.routes")(app);
 require("./app/routers/firebase.routes")(app);
 require("./app/routers/shipper.routes")(app);
@@ -46,7 +44,6 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Do an tot nghiep." });
 });
 
-// set port, listen for requests
 const PORT = process.env.PORT || 8888;
 
 app.listen(PORT, () => {

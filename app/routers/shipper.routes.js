@@ -15,19 +15,24 @@ module.exports = function (app) {
     [verifySignUp.checkDuplicateUsernameOrEmail],
     controller.signUp,
   );
-  app.post("/api/v1/shipper/login", controller.signIn);
 
-  app.get("/api/v1/shipper/getInfo", [authJwt.verifyToken], controller.getInfo);
+  app.post("/api/v1/shipper/login",
+    controller.signIn);
+
+  app.get("/api/v1/shipper/getShipperInfo", [authJwt.verifyToken], controller.getInfo);
+
   app.get(
     "/api/v1/shipper/listOrderHistory",
     [authJwt.verifyToken],
     controller.getInfo,
   );
+
   app.get(
-    "/api/v1/shipper/getStatistical",
+    "/api/v1/shipper/getDetailStatistical",
     [authJwt.verifyToken],
     controller.getStatistical,
   );
+  
   app.post(
     "/api/v1/shipper/approveOrder",
     [authJwt.verifyToken],
@@ -35,7 +40,7 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/api/v1/shipper/updateLocationAndStatus",
+    "/api/v1/shipper/updateShipperLocation",
     [authJwt.verifyToken],
     controller.updateLocationAndStatus,
   );
