@@ -19,7 +19,6 @@ const sendNotification = (req, res) => {
     .messaging()
     .sendToDevice(registrationToken, message, options)
     .then((response) => {
-      console.log(response);
       res
         .status(200)
         .send({ mess: "Notification sent successfully", success: true });
@@ -49,7 +48,6 @@ const sendOrder = (token, order) => {
       .messaging()
       .sendToDevice(registrationToken, message, options)
       .then((res) => {
-        console.log(res);
       });
   } catch (error) {}
 };

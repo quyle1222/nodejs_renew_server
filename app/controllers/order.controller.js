@@ -3,20 +3,28 @@ const Order = db.order;
 const Shipper = db.shipper;
 const firebase = require("./firebase.controller");
 const Constant = require("../utils/Constant");
+const googleService = require("../service/googleMapService");
 
-const distance = (lat1, lon1, lat2, lon2, unit) => {
-  const radlat1 = (Math.PI * lat1) / 180;
-  const radlat2 = (Math.PI * lat2) / 180;
-  const theta = lon1 - lon2;
-  const radtheta = (Math.PI * theta) / 180;
-  const dist =
-    Math.sin(radlat1) * Math.sin(radlat2) +
-    Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-  dist = Math.acos(dist);
-  dist = (dist * 180) / Math.PI;
-  dist = dist * 60 * 1.1515;
-  dist = dist * 1.609344;
-  return dist;
+const handleDirection = async (origin, destination) => {
+  const response = await googleService.calculatorDirections(
+    origin,
+    destination,
+  );
+  try {
+    if (response) {
+      const { routes } = response;
+      const { legs } = routes[0];
+      const { distance, duration } = legs[0];
+      const dataRes = {
+        distance: distance.value,
+        duration: duration.value,
+      };
+      return dataRes;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
 };
 
 const calculatorGoods = (listOrderProductDTOs) => {
@@ -28,13 +36,12 @@ const calculatorGoods = (listOrderProductDTOs) => {
 };
 
 const calculatorShippingFee = (distanceBranch) => {
-  const sum = 0;
-  if (distanceBranch <= 2.5) {
+  let sum = 0;
+  if (distanceBranch < 3000) {
     return 25000;
   } else {
-    const km = (distanceBranch / 10) * 10000;
-    const meters = (distanceBranch % 10) * 10000;
-    sum = km + meters;
+    const km = (distanceBranch / 1000) * 10000;
+    sum = km;
     return sum;
   }
 };
@@ -47,7 +54,7 @@ const calculatorOrderQuantity = (listOrderProductDTOs) => {
   return sum;
 };
 
-const createOrder = (req, res) => {
+const createOrder = async (req, res) => {
   const { body } = req;
   const {
     longitudeBranch,
@@ -56,15 +63,12 @@ const createOrder = (req, res) => {
     latitudeCustomer,
     listOrderProductDTOs,
   } = body;
-
-  const distanceBranch = distance(
-    latitudeBranch,
-    longitudeBranch,
-    latitudeCustomer,
-    longitudeCustomer,
-  );
+  const origin = `${latitudeBranch},${longitudeBranch}`;
+  const destination = `${latitudeCustomer},${longitudeCustomer}`;
+  const distanceBranch = await handleDirection(origin, destination);
+  const { distance, duration } = distanceBranch;
   const goods_fee = calculatorGoods(listOrderProductDTOs);
-  const shipping_fee = calculatorShippingFee(distanceBranch);
+  const shipping_fee = calculatorShippingFee(distance);
   const status = Constant.ORDER_CREATE;
   const receivingTime = new Date();
   const quantityProduct = calculatorOrderQuantity(listOrderProductDTOs);
@@ -73,9 +77,9 @@ const createOrder = (req, res) => {
   body.shipping_fee = shipping_fee;
   body.total_fee = goods_fee + shipping_fee;
   body.status = status;
-  body.distanceBranch = distanceBranch;
+  body.distanceBranch = distance;
   body.receivingTime = receivingTime;
-  body.timingBranchToCustomer = distanceBranch * 60 * 15;
+  body.timingBranchToCustomer = duration;
 
   const order = new Order(body);
   try {
@@ -108,33 +112,27 @@ const sendOrderToShipper = (order) => {
   try {
     Shipper.find().exec((err, response) => {
       let arrayShipper = [];
-      response.forEach((item) => {
+      response.forEach(async (item) => {
         const { latitude, longitude } = item.location;
-        const distanceShipper = distance(
-          latitudeBranch,
-          longitudeBranch,
-          latitude,
-          longitude,
-          "K",
-        );
-        if (distanceShipper < 3) {
+        const branch = `${latitudeBranch},${longitudeBranch}`;
+        const shipper = `${latitude},${longitude}`;
+        const distanceShipper = await (
+          await handleDirection(branch, shipper)
+        )?.distance;
+        if (distanceShipper < 3000) {
           arrayShipper.push(item);
         }
       });
       if (arrayShipper.length === 0) {
-        console.log("Hiện tại không có shipper");
       } else {
         const max = arrayShipper.length - 1;
         const min = 0;
         const index = Math.floor(Math.random() * (max - min) + min);
         const token = arrayShipper[index].tokenFireBase;
         firebase.sendOrder(token, order);
-        console.log("Đang tìm shipper");
       }
     });
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const getOrderProcessingOfShipper = (req, res) => {
@@ -187,7 +185,6 @@ const getOrderOfShipper = (req, res) => {
     console.log(error);
   }
 };
-
 
 module.exports = {
   createOrder,
