@@ -1,20 +1,21 @@
-const axios = require('axios');
+const axios = require("axios");
 
-const get = (url) => {
-    axios({
-        method:'get',
-        url,
-    })
-}
+const get = async (url) => {
+  return await axios({
+    method: "get",
+    url,
+  });
+};
 
-const post = (url) => {
-    axios({
-        method:'post',
-        url,
-    })
-}
+const post = async (url, data) => {
+  return await axios({
+    method: "post",
+    url,
+    data,
+  });
+};
 
 module.exports = {
-    get,
-    post
-}
+  get,
+  post,
+};
