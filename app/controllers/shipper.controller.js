@@ -231,6 +231,7 @@ const updateLocationAndStatus = (req, res) => {
 
 const updateInformation = (req, res) => {
   const { body } = req
+  const {}
 }
 
 module.exports = {
