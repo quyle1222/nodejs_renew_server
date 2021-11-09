@@ -17,6 +17,11 @@ const Shipper = mongoose.model(
       trim: true,
       required: true,
     },
+    cmnd: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     tokenFireBase: {
       type: String,
       default: null,
@@ -33,7 +38,7 @@ const Shipper = mongoose.model(
     },
     liReviewShipperDTOs: {
       type: Array,
-      default: null,
+      default: [],
     },
     rating: {
       type: Number,
@@ -51,18 +56,30 @@ const Shipper = mongoose.model(
       type: Number,
       default: null,
     },
+    totalSubTract: {
+      type: Number,
+      default: null,
+    },
     totalOrder: {
       type: Number,
       default: null,
     },
     listOrder: {
       type: Array,
-      default: null,
+      default: [],
     },
     avatarURL: {
       type: String,
       default: null,
     },
+    description: {
+      type: String,
+      default: "",
+    },
+    nameBank: {
+      type: String,
+      default:""
+    }
   }),
 );
 

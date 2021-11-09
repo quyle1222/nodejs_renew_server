@@ -11,7 +11,7 @@ module.exports = function (app) {
   });
 
   app.post(
-    "/api/v1/shipper/signup",
+    "/api/v1/shipper/createShipper",
     [verifySignUp.checkDuplicateUsernameOrEmail],
     controller.signUp,
   );
@@ -20,6 +20,8 @@ module.exports = function (app) {
     controller.signIn);
 
   app.get("/api/v1/shipper/getShipperInfo", [authJwt.verifyToken], controller.getInfo);
+
+  app.post("/api/v1/shipper/updateInformation",[authJwt.verifyToken],controller.updateInformation)
 
   app.get(
     "/api/v1/shipper/listOrderHistory",
