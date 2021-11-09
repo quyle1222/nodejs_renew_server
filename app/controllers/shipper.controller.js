@@ -230,8 +230,48 @@ const updateLocationAndStatus = (req, res) => {
 };
 
 const updateInformation = (req, res) => {
-  const { body } = req
-}
+  const { body, userId } = req;
+  const {
+    birthDate,
+    cmnd,
+    email,
+    firstName,
+    phone,
+    avatarURL,
+    nameBank,
+    numberATM,
+    accountName,
+    bankBranch,
+    description,
+  } = body;
+  const dataUpdate = {
+    birthDate,
+    cmnd,
+    email,
+    firstName,
+    phone,
+    avatarURL,
+    nameBank,
+    numberATM,
+    accountName,
+    bankBranch,
+    description,
+  };
+  Shipper.findByIdAndUpdate({ _id: userId }, dataUpdate).exec(
+    (err, response) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: err,
+        });
+      }
+      res.status(200).send({
+        success: true,
+        data: response,
+      });
+    },
+  );
+};
 
 module.exports = {
   signUp,
