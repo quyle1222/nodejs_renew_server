@@ -229,6 +229,10 @@ const updateLocationAndStatus = (req, res) => {
   });
 };
 
+const updateInformation = (req, res) => {
+  const { body } = req
+}
+
 module.exports = {
   signUp,
   signIn,
@@ -236,4 +240,5 @@ module.exports = {
   getStatistical,
   approvedOrder,
   updateLocationAndStatus,
+  updateInformation,
 };
