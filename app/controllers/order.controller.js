@@ -119,7 +119,7 @@ const sendOrderToShipper = (order) => {
         const distanceShipper = await (
           await handleDirection(branch, shipper)
         )?.distance;
-        if (distanceShipper < 3000) {
+        if (distanceShipper < 3000 && item?.onGPS) {
           arrayShipper.push(item);
         }
       });

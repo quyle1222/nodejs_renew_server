@@ -85,6 +85,10 @@ const Shipper = mongoose.model(
       type: String,
       default: "",
     },
+    onGPS: {
+      type: Boolean,
+      default: false,
+    },
   }),
 );
 

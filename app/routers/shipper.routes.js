@@ -16,12 +16,19 @@ module.exports = function (app) {
     controller.signUp,
   );
 
-  app.post("/api/v1/shipper/login",
-    controller.signIn);
+  app.post("/api/v1/shipper/login", controller.signIn);
 
-  app.get("/api/v1/shipper/getShipperInfo", [authJwt.verifyToken], controller.getInfo);
+  app.get(
+    "/api/v1/shipper/getShipperInfo",
+    [authJwt.verifyToken],
+    controller.getInfo,
+  );
 
-  app.post("/api/v1/shipper/updateInformation",[authJwt.verifyToken],controller.updateInformation)
+  app.post(
+    "/api/v1/shipper/updateShipper",
+    [authJwt.verifyToken],
+    controller.updateInformation,
+  );
 
   app.get(
     "/api/v1/shipper/listOrderHistory",
@@ -34,7 +41,7 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getStatistical,
   );
-  
+
   app.post(
     "/api/v1/shipper/approveOrder",
     [authJwt.verifyToken],
