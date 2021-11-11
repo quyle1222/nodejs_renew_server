@@ -226,14 +226,16 @@ const approvedOrder = async (req, res) => {
 const updateLocationAndStatus = (req, res) => {
   const { body, userId } = req;
   const { location, onGPS } = body;
-  Shipper.findOneAndUpdate({ _id: userId }, { location }).exec((err, res) => {
-    if (err) {
-      return res.status(500).send({
-        success: false,
-        message: err,
-      });
-    }
-  });
+  Shipper.findOneAndUpdate({ _id: userId }, { location, onGPS }).exec(
+    (err, res) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: err,
+        });
+      }
+    },
+  );
 };
 
 const updateInformation = (req, res) => {
