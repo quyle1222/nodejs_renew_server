@@ -93,7 +93,6 @@ const getInfo = (req, res) => {
         message: "User Not found.",
       });
     }
-    console.log("user", user);
     res.status(200).send({
       success: true,
       data: {
