@@ -93,6 +93,7 @@ const getInfo = (req, res) => {
         message: "User Not found.",
       });
     }
+    console.log("user", user);
     res.status(200).send({
       success: true,
       data: {
@@ -107,6 +108,10 @@ const getInfo = (req, res) => {
         totalPrice: user.totalPrice,
         totalOrder: user.totalOrder,
         listOrder: user.listOrder,
+        avatarURL: user.avatarURL,
+        description: user.description,
+        imgPathAvatar: user.nameBank,
+        email: user.email,
       },
     });
   });

@@ -11,6 +11,7 @@ const Shipper = mongoose.model(
     email: {
       type: String,
       trim: true,
+      default: "",
     },
     password: {
       type: String,
@@ -78,8 +79,12 @@ const Shipper = mongoose.model(
     },
     nameBank: {
       type: String,
-      default:""
-    }
+      default: "",
+    },
+    fullName: {
+      type: String,
+      default: "",
+    },
   }),
 );
 
