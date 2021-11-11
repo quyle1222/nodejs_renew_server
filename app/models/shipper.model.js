@@ -89,6 +89,10 @@ const Shipper = mongoose.model(
       type: Boolean,
       default: false,
     },
+    birthDate: {
+      type: String,
+      default: "",
+    },
   }),
 );
 

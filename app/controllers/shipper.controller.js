@@ -111,6 +111,9 @@ const getInfo = (req, res) => {
         description: user.description,
         imgPathAvatar: user.nameBank,
         email: user.email,
+        fullName: user.fullName,
+        phone: user.phone,
+        birthDate: user.birthDate,
       },
     });
   });
