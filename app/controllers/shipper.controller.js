@@ -236,6 +236,7 @@ const updateLocationAndStatus = (req, res) => {
 const updateInformation = (req, res) => {
   const { body, userId } = req;
   const {
+    fullName,
     birthDate,
     cmnd,
     email,
@@ -249,6 +250,7 @@ const updateInformation = (req, res) => {
     description,
   } = body;
   const dataUpdate = {
+    fullName,
     birthDate,
     cmnd,
     email,
@@ -261,7 +263,7 @@ const updateInformation = (req, res) => {
     bankBranch,
     description,
   };
-  Shipper.findByIdAndUpdate({ _id: userId }, dataUpdate).exec(
+  Shipper.findOneAndUpdate({ _id: userId }, dataUpdate).exec(
     (err, response) => {
       if (err) {
         return res.status(500).send({
@@ -271,7 +273,7 @@ const updateInformation = (req, res) => {
       }
       res.status(200).send({
         success: true,
-        data: response,
+        data: null,
       });
     },
   );
