@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + "-" + Date.now());
   },
 });
-const upload = multer({ storage: storage });
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];

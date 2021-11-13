@@ -14,7 +14,7 @@
     "rest",
     "api"
   ],
-  "author": "bezkoder",
+  "author": "tupt",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.24.0",
