@@ -14,10 +14,12 @@ const handleDirection = async (origin, destination) => {
     if (response) {
       const { routes } = response;
       const { legs } = routes[0];
-      const { distance, duration } = legs[0];
+      const { distance, duration, start_address, end_address } = legs[0];
       const dataRes = {
         distance: distance.value,
         duration: duration.value,
+        start_address,
+        end_address,
       };
       return dataRes;
     }
@@ -66,7 +68,7 @@ const createOrder = async (req, res) => {
   const origin = `${latitudeBranch},${longitudeBranch}`;
   const destination = `${latitudeCustomer},${longitudeCustomer}`;
   const distanceBranch = await handleDirection(origin, destination);
-  const { distance, duration } = distanceBranch;
+  const { distance, duration, end_address, start_address } = distanceBranch;
   const goods_fee = calculatorGoods(listOrderProductDTOs);
   const shipping_fee = calculatorShippingFee(distance);
   const status = Constant.ORDER_CREATE;
@@ -80,7 +82,8 @@ const createOrder = async (req, res) => {
   body.distanceBranch = distance;
   body.receivingTime = receivingTime;
   body.timingBranchToCustomer = duration;
-
+  body.receiverAddress = end_address;
+  body.branchAddress = start_address;
   const order = new Order(body);
   try {
     order.save((err, response) => {
@@ -95,41 +98,35 @@ const createOrder = async (req, res) => {
       res.send({
         success: true,
         message: "Tạo đơn hàng thành công , đang xử lý",
-        data: response,
       });
     });
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const sendOrderToShipper = (order) => {
   const { latitudeBranch, longitudeBranch } = order;
-  const p1 = {
-    lat: latitudeBranch,
-    lon: longitudeBranch,
-  };
+  const branch = `${latitudeBranch},${longitudeBranch}`;
   try {
-    Shipper.find().exec((err, response) => {
+    Shipper.find().exec(async (err, response) => {
       let arrayShipper = [];
-      response.forEach(async (item) => {
-        const { latitude, longitude } = item.location;
-        const branch = `${latitudeBranch},${longitudeBranch}`;
-        const shipper = `${latitude},${longitude}`;
-        const distanceShipper = await (
-          await handleDirection(branch, shipper)
-        )?.distance;
-        if (distanceShipper < 3000 && item?.onGPS) {
-          arrayShipper.push(item);
-        }
-      });
-      if (arrayShipper.length === 0) {
-      } else {
+      await Promise.all(
+        response.map(async (item) => {
+          const { latitude, longitude } = item.location;
+          const shipper = `${latitude},${longitude}`;
+          const distanceShipper = await (
+            await handleDirection(branch, shipper)
+          )?.distance;
+          if (distanceShipper < 3000 && item?.onGPS) {
+            arrayShipper.push(item);
+          }
+        }),
+      );
+      if (arrayShipper.length) {
         const max = arrayShipper.length - 1;
         const min = 0;
         const index = Math.floor(Math.random() * (max - min) + min);
-        const token = arrayShipper[index].tokenFireBase;
-        firebase.sendOrder(token, order);
+        const { tokenFireBase } = arrayShipper[index];
+        firebase.sendOrder(tokenFireBase, order);
       }
     });
   } catch (error) {}
@@ -155,16 +152,16 @@ const getOrderProcessingOfShipper = (req, res) => {
         data: arrayOrder,
       });
     });
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const getOrderOfShipper = (req, res) => {
   const { userId } = req;
   try {
-    Order.find({ shipper: userId }).exec((err, response) => {
-      let arrayOrder = [];
+    Order.find({
+      shipper: userId,
+      status: Constant.ORDER_COMPLETED,
+    }).exec((err, response) => {
       if (err) {
         return res.status(500).send({
           success: false,
@@ -172,17 +169,37 @@ const getOrderOfShipper = (req, res) => {
           message: err,
         });
       }
-      response.map((item) => {
-        item.status === Constant.ORDER_COMPLETED ? arrayOrder.push(item) : null;
-      });
       res.send({
         message: null,
         success: true,
-        data: arrayOrder,
+        data: response,
+      });
+    });
+  } catch (error) {}
+};
+
+const getOrderNonShipper = (req, res) => {
+  try {
+    Order.find({
+      status: Constant.ORDER_CREATE,
+      shipper: null,
+    }).exec((err, response) => {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: err,
+        });
+      }
+      res.status(200).send({
+        success: true,
+        data: response,
       });
     });
   } catch (error) {
-    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: error,
+    });
   }
 };
 
@@ -190,4 +207,5 @@ module.exports = {
   createOrder,
   getOrderProcessingOfShipper,
   getOrderOfShipper,
+  getOrderNonShipper,
 };

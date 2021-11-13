@@ -23,4 +23,12 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getOrderOfShipper,
   );
+
+   app.get(
+     "/api/v1/getOrderNonShipper",
+     [authJwt.verifyToken],
+     controller.getOrderNonShipper,
+   );
+  
+
 };

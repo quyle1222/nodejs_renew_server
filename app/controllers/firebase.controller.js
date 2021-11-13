@@ -30,6 +30,7 @@ const sendNotification = (req, res) => {
 
 const sendOrder = (token, order) => {
   const registrationToken = token;
+  console.log("order", order);
   const message = {
     data: {
       orderId: order._id.toString(),
@@ -47,8 +48,7 @@ const sendOrder = (token, order) => {
     admin
       .messaging()
       .sendToDevice(registrationToken, message, options)
-      .then((res) => {
-      });
+      .then((res) => {});
   } catch (error) {}
 };
 

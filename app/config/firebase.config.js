@@ -1,11 +1,11 @@
 const admin = require("firebase-admin");
 
-const serviceAccount = require("../root/fiboshipper-firebase-adminsdk-q2fwi-d685ed5a92.json");
+const serviceAccount = require("../root/fibogroup-955be-firebase-adminsdk-oecu2-31667b69da.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL:
-    "https://fiboshipper-default-rtdb.asia-southeast1.firebasedatabase.app",
+  // databaseURL:
+  //   "https://fiboshipper-default-rtdb.asia-southeast1.firebasedatabase.app",
 });
 
 module.exports.admin = admin;
