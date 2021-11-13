@@ -227,11 +227,21 @@ const updateLocationAndStatus = (req, res) => {
   const { body, userId } = req;
   const { location, onGPS } = body;
   Shipper.findOneAndUpdate({ _id: userId }, { location, onGPS }).exec(
-    (err, res) => {
-      if (err) {
+    (error, response) => {
+      if (error) {
         return res.status(500).send({
           success: false,
-          message: err,
+          message: error,
+          data: null,
+        });
+      } else {
+        return res.status(200).send({
+          success: true,
+          message: "Update thành công",
+          data: {
+            onGPS: response.onGPS,
+            location: response.location
+          },
         });
       }
     },
