@@ -93,29 +93,32 @@ const getInfo = (req, res) => {
         message: "User Not found.",
       });
     }
-    res.status(200).send({
-      success: true,
-      data: {
-        _id: user._id,
-        username: user.username,
-        liReviewShipperDTOs: user.liReviewShipperDTOs,
-        location: user.location,
-        liReviewShipperDTOs: user.liReviewShipperDTOs,
-        rating: user.rating,
-        totalPriceProduct: user.totalPriceProduct,
-        totalPriceShipment: user.totalPriceShipment,
-        totalPrice: user.totalPrice,
-        totalOrder: user.totalOrder,
-        listOrder: user.listOrder,
-        // avatarURL: user.avatarURL,
-        description: user.description,
-        imgPathAvatar: user.avatarURL,
-        email: user.email,
-        fullName: user.fullName,
-        phone: user.phone,
-        birthDate: user.birthDate,
+    Order.find({ status: { $ne: Constant.ORDER_CONFIRM } }).exec(
+      (error, order) => {
+        res.status(200).send({
+          success: true,
+          data: {
+            _id: user._id,
+            username: user.username,
+            liReviewShipperDTOs: user.liReviewShipperDTOs,
+            location: user.location,
+            liReviewShipperDTOs: user.liReviewShipperDTOs,
+            rating: user.rating,
+            totalPriceProduct: user.totalPriceProduct,
+            totalPriceShipment: user.totalPriceShipment,
+            totalPrice: user.totalPrice,
+            totalOrder: user.totalOrder,
+            haveOrder: order ? true : false,
+            description: user.description,
+            imgPathAvatar: user.avatarURL,
+            email: user.email,
+            fullName: user.fullName,
+            phone: user.phone,
+            birthDate: user.birthDate,
+          },
+        });
       },
-    });
+    );
   });
 };
 
