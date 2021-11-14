@@ -24,11 +24,21 @@ module.exports = function (app) {
     controller.getOrderOfShipper,
   );
 
-   app.get(
-     "/api/v1/getOrderNonShipper",
-     [authJwt.verifyToken],
-     controller.getOrderNonShipper,
-   );
-  
+  app.get(
+    "/api/v1/getOrderNonShipper",
+    [authJwt.verifyToken],
+    controller.getOrderNonShipper,
+  );
 
+  app.post(
+    "/api/v1/changeStatusOrder",
+    [authJwt.verifyToken],
+    controller.changeStatusOrder,
+  );
+
+   app.get(
+     "/api/v1/getDetailOrder",
+     [authJwt.verifyToken],
+     controller.getDetailOrder,
+   );
 };

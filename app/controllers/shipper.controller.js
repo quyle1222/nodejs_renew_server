@@ -199,8 +199,9 @@ const approvedOrder = async (req, res) => {
   if (isApproved) {
     const newData = {
       shipper: userId,
-      status: Constant.ORDER_APPROVED,
+      status: Constant.ORDER_CONFIRM,
     };
+
     Order.findOneAndUpdate({ _id: orderId }, newData, {
       useFindAndModify: false,
       new: true,

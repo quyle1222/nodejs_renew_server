@@ -201,7 +201,6 @@ const getOrderNonShipper = (req, res) => {
       await Promise.all(
         response.map(async (item) => {
           const check = await checkInArray(userId, item.listShipperReject);
-          console.log("check", check);
           !check ? arrayOrder.push(item) : null;
         }),
       );
@@ -218,9 +217,35 @@ const getOrderNonShipper = (req, res) => {
   }
 };
 
+const changeStatusOrder = (req, res) => {
+  const { userId, body } = req;
+  const { orderId, status } = body;
+
+  Order.findOneAndUpdate({ _id: orderId });
+};
+
+const getDetailOrder = (req, res) => {
+  const { query } = req;
+  const { orderId } = query;
+  Order.findById(orderId).exec((err, order) => {
+    if (err) {
+      return res.status(500).send({
+        success: false,
+        message: err,
+      });
+    }
+    return res.status(200).send({
+      success: true,
+      data: order,
+    });
+  });
+};
+
 module.exports = {
   createOrder,
   getOrderProcessingOfShipper,
   getOrderOfShipper,
   getOrderNonShipper,
+  changeStatusOrder,
+  getDetailOrder,
 };
