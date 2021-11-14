@@ -148,7 +148,7 @@ const getStatistical = async (req, res) => {
     dateIn: dateIn || day,
     status: Constant.ORDER_COMPLETED,
   }).exec((err, order) => {
-    const arrayPrice = handleStatistical(order);
+    const priceShipment = handleStatistical(order);
     if (err) {
       res.status(500).send({
         success: false,
@@ -187,7 +187,7 @@ const getStatistical = async (req, res) => {
       data: {
         dateIn: dateIn || day,
         hour,
-        arrayPrice,
+        priceShipment,
       },
     });
   });
