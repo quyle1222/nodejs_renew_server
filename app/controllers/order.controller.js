@@ -178,21 +178,36 @@ const getOrderOfShipper = (req, res) => {
   } catch (error) {}
 };
 
+const checkInArray = (need, arr) => {
+  return arr.indexOf(need) != -1;
+};
+
 const getOrderNonShipper = (req, res) => {
+  const { userId } = req;
   try {
     Order.find({
       status: Constant.ORDER_CREATE,
       shipper: null,
-    }).exec((err, response) => {
+    }).exec(async (err, response) => {
       if (err) {
-        res.status(500).send({
+        return res.status(500).send({
           success: false,
           message: err,
         });
       }
+
+      let arrayOrder = [];
+
+      await Promise.all(
+        response.map(async (item) => {
+          const check = await checkInArray(userId, item.listShipperReject);
+          console.log("check", check);
+          !check ? arrayOrder.push(item) : null;
+        }),
+      );
       res.status(200).send({
         success: true,
-        data: response,
+        data: arrayOrder,
       });
     });
   } catch (error) {
