@@ -141,10 +141,8 @@ const handleStatistical = (listOrder) => {
 const getStatistical = async (req, res) => {
   const { query } = req;
   let { shipperId, dateIn } = query;
-
   let day = new Date();
   day = `${day.getDate()}/${day.getMonth() + 1}/${day.getFullYear()}`;
-
   Order.find({
     shipperId,
     dateIn: dateIn || day,
@@ -186,7 +184,7 @@ const getStatistical = async (req, res) => {
     ];
     return res.status(200).send({
       success: true,
-      message: {
+      data: {
         dateIn: dateIn || day,
         hour,
         arrayPrice,
@@ -240,7 +238,7 @@ const updateLocationAndStatus = (req, res) => {
           message: "Update thành công",
           data: {
             onGPS: response.onGPS,
-            location: response.location
+            location: response.location,
           },
         });
       }
