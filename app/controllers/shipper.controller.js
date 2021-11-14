@@ -196,7 +196,6 @@ const getStatistical = async (req, res) => {
 const approvedOrder = async (req, res) => {
   const { body, userId } = req;
   const { orderId, isApproved } = body;
-
   if (isApproved) {
     const newData = {
       shipper: userId,
@@ -217,6 +216,32 @@ const approvedOrder = async (req, res) => {
         message: "Đã chấp nhận đơn hàng",
         data: order,
       });
+    });
+  } else {
+    Order.findOne({ _id: orderId }).exec((err, order) => {
+      if (err || !order) {
+        return res.status(500).send({
+          success: false,
+          message: "Đã xảy ra lỗi",
+        });
+      }
+      let { listShipperReject } = order;
+      listShipperReject.push(userId);
+      Order.findOneAndUpdate({ _id: orderId }, { listShipperReject }).exec(
+        (error, response) => {
+          if (error) {
+            return res.status(500).send({
+              success: false,
+              message: "Đã xảy ra lỗi",
+            });
+          }
+          return res.status(200).send({
+            success: true,
+            message: "Đã từ chối đơn hàng",
+            data: null,
+          });
+        },
+      );
     });
   }
 };
