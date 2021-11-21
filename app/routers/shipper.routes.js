@@ -18,7 +18,11 @@ module.exports = function (app) {
 
   app.post("/api/v1/shipper/login", controller.signIn);
 
-  app.post("/api/v1/shipper/saveToken", controller.saveToken);
+  app.post(
+    "/api/v1/shipper/saveToken",
+    [authJwt.verifyToken],
+    controller.saveToken,
+  );
 
   app.get(
     "/api/v1/shipper/getShipperInfo",

@@ -332,18 +332,20 @@ const saveToken = (req, res) => {
             success: false,
             message: err,
           });
+        } else {
+          return res.status(200).send({
+            success: true,
+            data: response,
+          });
         }
-        return res.status(200).send({
-          success: true,
-          data: null,
-        });
       },
     );
+  } else {
+    return res.status(500).send({
+      success: false,
+      message: "",
+    });
   }
-  return res.status(500).send({
-    success: false,
-    message: "",
-  });
 };
 
 module.exports = {
