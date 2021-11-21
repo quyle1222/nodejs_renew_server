@@ -115,6 +115,7 @@ const getInfo = (req, res) => {
             fullName: user.fullName,
             phone: user.phone,
             birthDate: user.birthDate,
+            tokenFireBase: user.tokenFireBase,
           },
         });
       },
@@ -129,6 +130,9 @@ const convertToTime = (date) => {
 
 const handleStatistical = async (listOrder) => {
   const array = Array(24).fill(0);
+  let totalShippingFee = 0;
+  let totalFoodsFee = 0;
+  let totalFee = 0;
   if (listOrder && listOrder.length > 0) {
     await Promise.all(
       await listOrder.map((order) => {
@@ -136,12 +140,15 @@ const handleStatistical = async (listOrder) => {
         array.map((item, index) => {
           if (completionTime === index) {
             array[index] += order.shipping_fee;
+            totalShippingFee += order.shipping_fee;
+            totalFoodsFee += order.goods_fee;
+            totalFee += order.total_fee;
           }
         });
       }),
     );
   }
-  return array;
+  return { array, totalShippingFee, totalFoodsFee, totalFee };
 };
 
 const getStatistical = async (req, res) => {
@@ -151,9 +158,10 @@ const getStatistical = async (req, res) => {
   Order.find({
     shipper: userId,
     status: Constant.ORDER_COMPLETED,
-    // completionTime: dateIn ? dateIn : day,
+    completionTime: dateIn ? dateIn : day,
   }).exec(async (err, order) => {
-    const priceShipment = await handleStatistical(order);
+    const temp = await handleStatistical(order);
+    const { array, totalShippingFee, totalFoodsFee, totalFee } = temp;
     if (err) {
       res.status(500).send({
         success: false,
@@ -192,7 +200,10 @@ const getStatistical = async (req, res) => {
       data: {
         dateIn: dateIn || day,
         hour,
-        priceShipment,
+        priceShipment: array,
+        totalShippingFee,
+        totalFoodsFee,
+        totalFee,
       },
     });
   });
