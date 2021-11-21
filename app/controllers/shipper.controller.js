@@ -15,7 +15,6 @@ const signUp = (req, res) => {
     username,
     password: bcrypt.hashSync(password, 8),
   });
-
   user.save((err, user) => {
     if (err) {
       res.status(500).send({
@@ -93,33 +92,33 @@ const getInfo = (req, res) => {
         message: "User Not found.",
       });
     }
-    Order.find({ status: { $ne: Constant.ORDER_CONFIRM } }).exec(
-      (error, order) => {
-        res.status(200).send({
-          success: true,
-          data: {
-            _id: user._id,
-            username: user.username,
-            liReviewShipperDTOs: user.liReviewShipperDTOs,
-            location: user.location,
-            liReviewShipperDTOs: user.liReviewShipperDTOs,
-            rating: user.rating,
-            totalPriceProduct: user.totalPriceProduct,
-            totalPriceShipment: user.totalPriceShipment,
-            totalPrice: user.totalPrice,
-            totalOrder: user.totalOrder,
-            haveOrder: order ? true : false,
-            description: user.description,
-            imgPathAvatar: user.avatarURL,
-            email: user.email,
-            fullName: user.fullName,
-            phone: user.phone,
-            birthDate: user.birthDate,
-            tokenFireBase: user.tokenFireBase,
-          },
-        });
-      },
-    );
+    Order.find({
+      status: { $ne: Constant.ORDER_CONFIRM },
+      shipper: userId,
+    }).exec((error, order) => {
+      res.status(200).send({
+        success: true,
+        data: {
+          _id: user._id,
+          username: user.username,
+          liReviewShipperDTOs: user.liReviewShipperDTOs,
+          location: user.location,
+          rating: user.rating,
+          totalPriceProduct: user.totalPriceProduct,
+          totalPriceShipment: user.totalPriceShipment,
+          totalPrice: user.totalPrice,
+          totalOrder: user.totalOrder,
+          haveOrder: order ? true : false,
+          description: user.description,
+          imgPathAvatar: user.avatarURL,
+          email: user.email,
+          fullName: user.fullName,
+          phone: user.phone,
+          birthDate: user.birthDate,
+          tokenFireBase: user.tokenFireBase,
+        },
+      });
+    });
   });
 };
 
