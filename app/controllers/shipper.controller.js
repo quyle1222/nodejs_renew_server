@@ -158,7 +158,7 @@ const getStatistical = async (req, res) => {
   Order.find({
     shipper: userId,
     status: Constant.ORDER_COMPLETED,
-    completionTime: dateIn ? dateIn : day,
+    // completionTime: dateIn ? dateIn : day,
   }).exec(async (err, order) => {
     const temp = await handleStatistical(order);
     const { array, totalShippingFee, totalFoodsFee, totalFee } = temp;
