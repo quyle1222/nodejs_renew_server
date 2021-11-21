@@ -123,20 +123,23 @@ const getInfo = (req, res) => {
 };
 
 const convertToTime = (date) => {
+  date = new Date(date);
   return date.getHours();
 };
 
-const handleStatistical = (listOrder) => {
+const handleStatistical = async (listOrder) => {
   const array = Array(24).fill(0);
   if (listOrder && listOrder.length > 0) {
-    listOrder.forEach((order) => {
-      const completionTime = convertToTime(order.completionTime);
-      array.forEach((item, index) => {
-        if (completionTime === index) {
-          array[index] += order.shipmentPrice;
-        }
-      });
-    });
+    await Promise.all(
+      await listOrder.map((order) => {
+        const completionTime = convertToTime(order.completionTime);
+        array.map((item, index) => {
+          if (completionTime === index) {
+            array[index] += order.shipping_fee;
+          }
+        });
+      }),
+    );
   }
   return array;
 };
@@ -145,13 +148,12 @@ const getStatistical = async (req, res) => {
   const { query, userId } = req;
   let { dateIn } = query;
   let day = new Date();
-  day = `${day.getDate()}/${day.getMonth() + 1}/${day.getFullYear()}`;
   Order.find({
-    _id: userId,
-    dateIn: dateIn || day,
+    shipper: userId,
     status: Constant.ORDER_COMPLETED,
-  }).exec((err, order) => {
-    const priceShipment = handleStatistical(order);
+    // completionTime: dateIn ? dateIn : day,
+  }).exec(async (err, order) => {
+    const priceShipment = await handleStatistical(order);
     if (err) {
       res.status(500).send({
         success: false,

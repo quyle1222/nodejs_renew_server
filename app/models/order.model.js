@@ -107,7 +107,7 @@ const Order = mongoose.model(
       default: null,
     },
     completionTime: {
-      type: String,
+      type: Date,
       default: null,
     },
     listShipperReject: {
