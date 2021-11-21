@@ -321,6 +321,31 @@ const updateInformation = (req, res) => {
   );
 };
 
+const saveToken = (req, res) => {
+  const { userId, body } = req;
+  const { token } = body;
+  if (token) {
+    Shipper.findOneAndUpdate({ _id: userId }, { tokenFireBase: token }).exec(
+      (err, response) => {
+        if (err) {
+          return res.status(500).send({
+            success: false,
+            message: err,
+          });
+        }
+        return res.status(200).send({
+          success: true,
+          data: null,
+        });
+      },
+    );
+  }
+  return res.status(500).send({
+    success: false,
+    message: "",
+  });
+};
+
 module.exports = {
   signUp,
   signIn,
@@ -329,4 +354,5 @@ module.exports = {
   approvedOrder,
   updateLocationAndStatus,
   updateInformation,
+  saveToken,
 };

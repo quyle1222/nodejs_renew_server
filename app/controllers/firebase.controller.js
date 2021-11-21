@@ -30,7 +30,6 @@ const sendNotification = (req, res) => {
 
 const sendOrder = (token, order) => {
   const registrationToken = token;
-  console.log("order", order);
   const message = {
     data: {
       orderId: order._id.toString(),
