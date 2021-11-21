@@ -142,12 +142,12 @@ const handleStatistical = (listOrder) => {
 };
 
 const getStatistical = async (req, res) => {
-  const { query } = req;
-  let { shipperId, dateIn } = query;
+  const { query, userId } = req;
+  let { dateIn } = query;
   let day = new Date();
   day = `${day.getDate()}/${day.getMonth() + 1}/${day.getFullYear()}`;
   Order.find({
-    shipperId,
+    _id: userId,
     dateIn: dateIn || day,
     status: Constant.ORDER_COMPLETED,
   }).exec((err, order) => {
