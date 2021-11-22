@@ -96,11 +96,11 @@ const Order = mongoose.model(
     },
     distanceBranch: {
       type: Number,
-      default: null,
+      default: 0,
     },
     distanceShipper: {
       type: Number,
-      default: null,
+      default: 0,
     },
     receivingTime: {
       type: String,

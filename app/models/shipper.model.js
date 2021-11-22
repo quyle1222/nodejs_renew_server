@@ -47,23 +47,23 @@ const Shipper = mongoose.model(
     },
     totalPriceProduct: {
       type: Number,
-      default: null,
+      default: 0,
     },
     totalPriceShipment: {
       type: Number,
-      default: null,
+      default: 0,
     },
     totalPrice: {
       type: Number,
-      default: null,
+      default: 0,
     },
     totalSubTract: {
       type: Number,
-      default: null,
+      default: 0,
     },
     totalOrder: {
       type: Number,
-      default: null,
+      default: 0,
     },
     listOrder: {
       type: Array,
@@ -71,13 +71,9 @@ const Shipper = mongoose.model(
     },
     avatarURL: {
       type: String,
-      default: null,
-    },
-    description: {
-      type: String,
       default: "",
     },
-    nameBank: {
+    description: {
       type: String,
       default: "",
     },
