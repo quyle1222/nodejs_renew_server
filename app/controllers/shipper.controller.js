@@ -294,13 +294,7 @@ const updateInformation = (req, res) => {
     birthDate,
     cmnd,
     email,
-    firstName,
-    phone,
     avatarURL,
-    nameBank,
-    numberATM,
-    accountName,
-    bankBranch,
     description,
   } = body;
   const dataUpdate = {
@@ -308,13 +302,7 @@ const updateInformation = (req, res) => {
     birthDate,
     cmnd,
     email,
-    firstName,
-    phone,
     avatarURL,
-    nameBank,
-    numberATM,
-    accountName,
-    bankBranch,
     description,
   };
   Shipper.findOneAndUpdate({ _id: userId }, dataUpdate).exec(
