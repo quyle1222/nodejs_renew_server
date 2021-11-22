@@ -228,11 +228,49 @@ const changeStatusOrder = (req, res) => {
           message: error,
         });
       }
-      return res.status(200).send({
-        success: true,
-        data: null,
-        message: "Cập nhật thành công",
-      });
+      if (completionTime) {
+        Shipper.findOne({ _id: userId }).exec((error, shipper) => {
+          const { shipping_fee, goods_fee, total_fee } = order;
+          let {
+            totalPriceProduct,
+            totalPriceShipment,
+            totalPrice,
+            totalOrder,
+          } = shipper;
+          totalPriceProduct += goods_fee;
+          totalPriceShipment += shipping_fee;
+          totalPrice += total_fee;
+          totalOrder += 1;
+          Shipper.findByIdAndUpdate(
+            { _id: userId },
+            {
+              totalPriceProduct,
+              totalPriceShipment,
+              totalPrice,
+              totalOrder,
+            },
+          ).exec((error, response) => {
+            if (error) {
+              return res.status(500).send({
+                success: false,
+                message: error,
+              });
+            } else {
+              return res.status(200).send({
+                success: true,
+                data: null,
+                message: "Cập nhật thành công",
+              });
+            }
+          });
+        });
+      } else {
+        return res.status(200).send({
+          success: true,
+          data: null,
+          message: "Cập nhật thành công",
+        });
+      }
     },
   );
 };
