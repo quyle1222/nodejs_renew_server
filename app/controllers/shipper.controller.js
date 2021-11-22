@@ -116,6 +116,7 @@ const getInfo = (req, res) => {
           phone: user.phone,
           birthDate: user.birthDate,
           tokenFireBase: user.tokenFireBase,
+          cmnd: user.cmnd
         },
       });
     });
