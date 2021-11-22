@@ -71,7 +71,7 @@ const Shipper = mongoose.model(
     },
     avatarURL: {
       type: String,
-      default: "",
+      default: null,
     },
     description: {
       type: String,
