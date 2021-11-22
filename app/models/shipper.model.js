@@ -43,7 +43,7 @@ const Shipper = mongoose.model(
     },
     rating: {
       type: Number,
-      default: null,
+      default: 5,
     },
     totalPriceProduct: {
       type: Number,
