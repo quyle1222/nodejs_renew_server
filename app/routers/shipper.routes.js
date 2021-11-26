@@ -11,51 +11,51 @@ module.exports = function (app) {
   });
 
   app.post(
-    "/api/v1/shipper/createShipper",
+    "/shipper/createShipper",
     [verifySignUp.checkDuplicateUsernameOrEmail],
     controller.signUp,
   );
 
-  app.post("/api/v1/shipper/login", controller.signIn);
+  app.post("/shipper/login", controller.signIn);
 
   app.post(
-    "/api/v1/shipper/saveToken",
+    "/shipper/saveToken",
     [authJwt.verifyToken],
     controller.saveToken,
   );
 
   app.get(
-    "/api/v1/shipper/getShipperInfo",
+    "/shipper/getShipperInfo",
     [authJwt.verifyToken],
     controller.getInfo,
   );
 
   app.post(
-    "/api/v1/shipper/updateShipper",
+    "/shipper/updateShipper",
     [authJwt.verifyToken],
     controller.updateInformation,
   );
 
   app.get(
-    "/api/v1/shipper/listOrderHistory",
+    "/shipper/listOrderHistory",
     [authJwt.verifyToken],
     controller.getInfo,
   );
 
   app.get(
-    "/api/v1/shipper/getDetailStatistical",
+    "/shipper/getDetailStatistical",
     [authJwt.verifyToken],
     controller.getStatistical,
   );
 
   app.post(
-    "/api/v1/shipper/approveOrder",
+    "/shipper/approveOrder",
     [authJwt.verifyToken],
     controller.approvedOrder,
   );
 
   app.post(
-    "/api/v1/shipper/updateShipperLocation",
+    "/shipper/updateShipperLocation",
     [authJwt.verifyToken],
     controller.updateLocationAndStatus,
   );

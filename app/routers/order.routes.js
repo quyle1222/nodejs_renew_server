@@ -10,34 +10,34 @@ module.exports = function (app) {
     next();
   });
 
-  app.post("/api/v1/createOrder", controller.createOrder);
+  app.post("/order/createOrder", controller.createOrder);
 
   app.get(
-    "/api/v1/getOrderProcessing",
+    "/order/getOrderProcessing",
     [authJwt.verifyToken],
     controller.getOrderProcessingOfShipper,
   );
 
   app.get(
-    "/api/v1/getOrderComplete",
+    "/order/getOrderComplete",
     [authJwt.verifyToken],
     controller.getOrderOfShipper,
   );
 
   app.get(
-    "/api/v1/getOrderNonShipper",
+    "/order/getOrderNonShipper",
     [authJwt.verifyToken],
     controller.getOrderNonShipper,
   );
 
   app.post(
-    "/api/v1/changeStatusOrder",
+    "/order/changeStatusOrder",
     [authJwt.verifyToken],
     controller.changeStatusOrder,
   );
 
    app.get(
-     "/api/v1/getDetailOrder",
+     "/order/getDetailOrder",
      [authJwt.verifyToken],
      controller.getDetailOrder,
    );
