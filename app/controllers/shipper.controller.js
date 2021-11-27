@@ -1,6 +1,7 @@
 const config = require("../config/auth.config");
 const db = require("../models");
 const Constant = require("../utils/Constant");
+const commonFunction = require("../utils/Function")
 
 const Shipper = db.shipper;
 const Order = db.order;
@@ -154,8 +155,8 @@ const handleStatistical = async (listOrder) => {
 const getStatistical = async (req, res) => {
   const { query, userId } = req;
   let { dateIn } = query;
-  let day = new Date();
-  dateIn = new Date(dateIn)
+  let day = commonFunction.convertToDate(new Date());
+  dateIn = commonFunction.convertToDate(new Date(dateIn));
   Order.find({
     shipper: userId,
     status: Constant.ORDER_COMPLETED,
@@ -219,7 +220,6 @@ const approvedOrder = async (req, res) => {
       shipper: userId,
       status: Constant.ORDER_CONFIRM,
     };
-
     Order.findOneAndUpdate({ _id: orderId }, newData, {
       useFindAndModify: false,
       new: true,
