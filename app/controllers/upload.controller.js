@@ -33,7 +33,6 @@ const uploadImage = (req, res, next) => {
       });
     }
   };
-
   upload(req);
 };
 

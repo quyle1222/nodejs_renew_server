@@ -4,8 +4,6 @@ const cors = require("cors");
 const db = require("./app/models");
 const app = express();
 const dbConfig = require("./app/config/db.config");
-const Role = db.role;
-
 const corsOptions = {
   origin: "http://localhost:8888",
 };
@@ -13,13 +11,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
-
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 db.mongoose
-  // .connect(`mongodb://localhost:27017/test`, {
   .connect(`${dbConfig.DB}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

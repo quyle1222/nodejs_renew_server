@@ -220,7 +220,7 @@ const getOrderNonShipper = (req, res) => {
 const changeStatusOrder = (req, res) => {
   const { userId, body } = req;
   const { orderId, status, completionTime } = body;
-  Order.findOneAndUpdate({ _id: orderId }, { status, completionTime }).exec(
+  Order.findOneAndUpdate({ _id: orderId }, { status, completionTime : new Date(completionTime) }).exec(
     (error, order) => {
       if (error) {
         return res.status(500).send({
