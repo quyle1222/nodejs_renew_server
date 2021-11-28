@@ -137,9 +137,9 @@ const handleStatistical = async (listOrder) => {
   if (listOrder && listOrder.length > 0) {
     await Promise.all(
       await listOrder.map((order) => {
-        const completionTime = convertToTime(order.completionTime);
+        const completeTimeTypeDate = convertToTime(order.completeTimeTypeDate);
         array.map((item, index) => {
-          if (completionTime === index) {
+          if (completeTimeTypeDate === index) {
             array[index] += order.shipping_fee;
             totalShippingFee += order.shipping_fee;
             totalFoodsFee += order.goods_fee;
@@ -155,12 +155,11 @@ const handleStatistical = async (listOrder) => {
 const getStatistical = async (req, res) => {
   const { query, userId } = req;
   let { dateIn } = query;
-  let day = commonFunction.convertToDate(new Date());
-  dateIn = commonFunction.convertToDate(new Date(dateIn));
+  let day =new Date()
   Order.find({
     shipper: userId,
     status: Constant.ORDER_COMPLETED,
-    completionTime: dateIn ? dateIn : day,
+    completionTime: commonFunction.convertToDate(dateIn ? dateIn : day),
   }).exec(async (err, order) => {
     const temp = await handleStatistical(order);
     const { array, totalShippingFee, totalFoodsFee, totalFee } = temp;
@@ -206,7 +205,7 @@ const getStatistical = async (req, res) => {
         totalShippingFee,
         totalFoodsFee,
         totalFee,
-        totalOrder:order.length
+        totalOrder: order.length,
       },
     });
   });
