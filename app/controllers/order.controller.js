@@ -221,59 +221,60 @@ const getOrderNonShipper = (req, res) => {
 const changeStatusOrder = (req, res) => {
   const { userId, body } = req;
   const { orderId, status, completionTime } = body;
-  Order.findOneAndUpdate({ _id: orderId }, { status, completionTime : commonFunction.convertToDate(completionTime) }).exec(
-    (error, order) => {
-      if (error) {
-        return res.status(500).send({
-          success: false,
-          message: error,
-        });
-      }
-      if (completionTime) {
-        Shipper.findOne({ _id: userId }).exec((error, shipper) => {
-          const { shipping_fee, goods_fee, total_fee } = order;
-          let {
+  Order.findOneAndUpdate(
+    { _id: orderId },
+    {
+      status,
+      completionTime: commonFunction.convertToDate(completionTime),
+      completeTimeTypeDate: completionTime,
+    },
+  ).exec((error, order) => {
+    if (error) {
+      return res.status(500).send({
+        success: false,
+        message: error,
+      });
+    }
+    if (completionTime) {
+      Shipper.findOne({ _id: userId }).exec((error, shipper) => {
+        const { shipping_fee, goods_fee, total_fee } = order;
+        let { totalPriceProduct, totalPriceShipment, totalPrice, totalOrder } =
+          shipper;
+        totalPriceProduct += goods_fee;
+        totalPriceShipment += shipping_fee;
+        totalPrice += total_fee;
+        totalOrder += 1;
+        Shipper.findByIdAndUpdate(
+          { _id: userId },
+          {
             totalPriceProduct,
             totalPriceShipment,
             totalPrice,
             totalOrder,
-          } = shipper;
-          totalPriceProduct += goods_fee;
-          totalPriceShipment += shipping_fee;
-          totalPrice += total_fee;
-          totalOrder += 1;
-          Shipper.findByIdAndUpdate(
-            { _id: userId },
-            {
-              totalPriceProduct,
-              totalPriceShipment,
-              totalPrice,
-              totalOrder,
-            },
-          ).exec((error, response) => {
-            if (error) {
-              return res.status(500).send({
-                success: false,
-                message: error,
-              });
-            } else {
-              return res.status(200).send({
-                success: true,
-                data: null,
-                message: "Cập nhật thành công",
-              });
-            }
-          });
+          },
+        ).exec((error, response) => {
+          if (error) {
+            return res.status(500).send({
+              success: false,
+              message: error,
+            });
+          } else {
+            return res.status(200).send({
+              success: true,
+              data: null,
+              message: "Cập nhật thành công",
+            });
+          }
         });
-      } else {
-        return res.status(200).send({
-          success: true,
-          data: null,
-          message: "Cập nhật thành công",
-        });
-      }
-    },
-  );
+      });
+    } else {
+      return res.status(200).send({
+        success: true,
+        data: null,
+        message: "Cập nhật thành công",
+      });
+    }
+  });
 };
 
 const getDetailOrder = (req, res) => {

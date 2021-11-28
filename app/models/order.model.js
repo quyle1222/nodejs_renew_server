@@ -110,6 +110,10 @@ const Order = mongoose.model(
       type: String,
       default: null,
     },
+    completeTimeTypeDate: {
+      type: Date,
+      default: null,
+    },
     listShipperReject: {
       type: Array,
       default: null,
