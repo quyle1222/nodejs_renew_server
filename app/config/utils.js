@@ -1,4 +1,4 @@
 module.exports = {
-    GOOGLE_MAP_KEY:"AIzaSyAQh0xVqitYerM3i0nfBh3FOQaG_qltRxs",
+    GOOGLE_MAP_KEY:"JYUXKpoY8cAOx7TCmPLf8qOqGUjQvD0phUxU8syV",
   };
   

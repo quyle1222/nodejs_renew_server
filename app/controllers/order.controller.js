@@ -30,6 +30,17 @@ const handleDirection = async (origin, destination) => {
   }
 };
 
+const handleGetAddress = (lat,lng) => {
+  googleService.getAddress(lat, lng).then(response => {
+    console.log("response",response);
+    if (response) {
+       
+    }
+    
+    return null;
+   });
+}
+
 const calculatorGoods = (listOrderProductDTOs) => {
   let sum = 0;
   listOrderProductDTOs.forEach((item) => {
@@ -65,11 +76,15 @@ const createOrder = async (req, res) => {
     longitudeCustomer,
     latitudeCustomer,
     listOrderProductDTOs,
+    receiverAddress,
+    branchAddress
   } = body;
   const origin = `${latitudeBranch},${longitudeBranch}`;
   const destination = `${latitudeCustomer},${longitudeCustomer}`;
   const distanceBranch = await handleDirection(origin, destination);
-  const { distance, duration, end_address, start_address } = distanceBranch;
+  const { distance, duration } = distanceBranch;
+
+  const end_address = await handleDirection(latitudeBranch, longitudeBranch);
   const goods_fee = calculatorGoods(listOrderProductDTOs);
   const shipping_fee = calculatorShippingFee(distance);
   const status = Constant.ORDER_CREATE;
@@ -83,8 +98,8 @@ const createOrder = async (req, res) => {
   body.distanceBranch = distance;
   body.receivingTime = receivingTime;
   body.timingBranchToCustomer = duration;
-  body.receiverAddress = end_address;
-  body.branchAddress = start_address;
+  body.receiverAddress = receiverAddress ? receiverAddress : end_address;
+  body.branchAddress = branchAddress ? branchAddress : end_address;
   const order = new Order(body);
   try {
     order.save((err, response) => {
