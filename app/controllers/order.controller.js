@@ -246,8 +246,10 @@ const changeStatusOrder = (req, res) => {
     { _id: orderId },
     {
       status,
-      completionTime: commonFunction.convertToDate(completionTime),
-      completeTimeTypeDate: completionTime,
+      completionTime: completionTime
+        ? commonFunction.convertToDate(completionTime)
+        : "",
+      completeTimeTypeDate: completionTime ? completionTime : null,
     },
   ).exec((error, order) => {
     if (error) {
