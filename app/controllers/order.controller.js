@@ -4,7 +4,7 @@ const Shipper = db.shipper;
 const firebase = require("./firebase.controller");
 const Constant = require("../utils/Constant");
 const googleService = require("../service/googleMapService");
-const commonFunction = require("../utils/Function")
+const commonFunction = require("../utils/Function");
 
 const handleDirection = async (origin, destination) => {
   const response = await googleService.calculatorDirections(
@@ -30,16 +30,19 @@ const handleDirection = async (origin, destination) => {
   }
 };
 
-const handleGetAddress = (lat,lng) => {
-  googleService.getAddress(lat, lng).then(response => {
-    console.log("response",response);
-    if (response) {
-       
+const handleGetAddress = async (lat, lng) => {
+  let address = "";
+  const response = await googleService.getAddress(lat, lng);
+  try {
+    if (response.status === "OK") {
+      const { results } = response;
+      if (results && results.length) {
+        address = results[0].formatted_address;
+      }
     }
-    
-    return null;
-   });
-}
+  } catch (error) {}
+  return address;
+};
 
 const calculatorGoods = (listOrderProductDTOs) => {
   let sum = 0;
@@ -77,14 +80,17 @@ const createOrder = async (req, res) => {
     latitudeCustomer,
     listOrderProductDTOs,
     receiverAddress,
-    branchAddress
+    branchAddress,
   } = body;
   const origin = `${latitudeBranch},${longitudeBranch}`;
   const destination = `${latitudeCustomer},${longitudeCustomer}`;
   const distanceBranch = await handleDirection(origin, destination);
   const { distance, duration } = distanceBranch;
-
-  const end_address = await handleDirection(latitudeBranch, longitudeBranch);
+  const start_address = await handleGetAddress(latitudeBranch, longitudeBranch);
+  const end_address = await handleGetAddress(
+    latitudeCustomer,
+    longitudeCustomer,
+  );
   const goods_fee = calculatorGoods(listOrderProductDTOs);
   const shipping_fee = calculatorShippingFee(distance);
   const status = Constant.ORDER_CREATE;
@@ -98,8 +104,8 @@ const createOrder = async (req, res) => {
   body.distanceBranch = distance;
   body.receivingTime = receivingTime;
   body.timingBranchToCustomer = duration;
-  body.receiverAddress = receiverAddress ? receiverAddress : end_address;
-  body.branchAddress = branchAddress ? branchAddress : end_address;
+  body.receiverAddress = start_address;
+  body.branchAddress = end_address;
   const order = new Order(body);
   try {
     order.save((err, response) => {
