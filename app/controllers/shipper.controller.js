@@ -1,7 +1,7 @@
 const config = require("../config/auth.config");
 const db = require("../models");
 const Constant = require("../utils/Constant");
-const commonFunction = require("../utils/Function")
+const commonFunction = require("../utils/Function");
 
 const Shipper = db.shipper;
 const Order = db.order;
@@ -117,7 +117,7 @@ const getInfo = (req, res) => {
           phone: user.phone,
           birthDate: user.birthDate,
           tokenFireBase: user.tokenFireBase,
-          cmnd: user.cmnd
+          cmnd: user.cmnd,
         },
       });
     });
@@ -155,7 +155,7 @@ const handleStatistical = async (listOrder) => {
 const getStatistical = async (req, res) => {
   const { query, userId } = req;
   let { dateIn } = query;
-  let day =new Date()
+  let day = new Date();
   Order.find({
     shipper: userId,
     status: Constant.ORDER_COMPLETED,
@@ -291,14 +291,7 @@ const updateLocationAndStatus = (req, res) => {
 
 const updateInformation = (req, res) => {
   const { body, userId } = req;
-  const {
-    fullName,
-    birthDate,
-    cmnd,
-    email,
-    avatarURL,
-    description,
-  } = body;
+  const { fullName, birthDate, cmnd, email, avatarURL, description } = body;
   const dataUpdate = {
     fullName,
     birthDate,
