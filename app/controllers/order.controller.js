@@ -44,10 +44,12 @@ const handleGetAddress = async (lat, lng) => {
   return address;
 };
 
-const calculatorGoods = (listOrderProductDTOs) => {
+const calculatorGoods = async (listOrderProductDTOs) => {
   let sum = 0;
-  listOrderProductDTOs.forEach((item) => {
-    sum += item.finishPriceProduct;
+  await listOrderProductDTOs.forEach((item) => {
+    const { quantityProduct, finishPriceProduct } = item;
+    const totalPrice = item ? quantityProduct + finishPriceProduct : 0;
+    sum += parseInt(totalPrice);
   });
   return sum;
 };
@@ -91,7 +93,7 @@ const createOrder = async (req, res) => {
     latitudeCustomer,
     longitudeCustomer,
   );
-  const goods_fee = calculatorGoods(listOrderProductDTOs);
+  const goods_fee = await calculatorGoods(listOrderProductDTOs);
   const shipping_fee = calculatorShippingFee(distance);
   const status = Constant.ORDER_CREATE;
   const receivingTime = new Date();
