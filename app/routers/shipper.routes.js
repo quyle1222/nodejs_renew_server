@@ -19,16 +19,14 @@ module.exports = function (app) {
   app.post("/shipper/login", controller.signIn);
 
   app.post(
-    "/shipper/saveToken",
+    "/shipper/resetPassword",
     [authJwt.verifyToken],
-    controller.saveToken,
+    controller.resetPassword,
   );
 
-  app.get(
-    "/shipper/getShipperInfo",
-    [authJwt.verifyToken],
-    controller.getInfo,
-  );
+  app.post("/shipper/saveToken", [authJwt.verifyToken], controller.saveToken);
+
+  app.get("/shipper/getShipperInfo", [authJwt.verifyToken], controller.getInfo);
 
   app.post(
     "/shipper/updateShipper",
