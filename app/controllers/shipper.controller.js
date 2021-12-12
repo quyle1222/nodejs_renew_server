@@ -75,6 +75,64 @@ const signIn = (req, res) => {
   });
 };
 
+const resetPassword = (req, res) => {
+  const { body, userId } = req;
+  const { oldPassword, newPassword } = body;
+  if (
+    !newPassword ||
+    !oldPassword ||
+    newPassword.trim() ||
+    oldPassword.trim()
+  ) {
+    res.status(500).send({
+      success: false,
+      message: "Chưa nhập password",
+    });
+    return;
+  }
+  Shipper.findOne({ _id: userId }).exec((error, user) => {
+    if (error) {
+      res.status(500).send({
+        success: false,
+        message: error,
+      });
+      return;
+    }
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User Not found.",
+      });
+    }
+    const passwordIsValid = bcrypt.compareSync(oldPassword, user.password);
+    if (!passwordIsValid || !newPassword) {
+      return res.status(401).send({
+        success: false,
+        accessToken: null,
+        message: "Invalid Password!",
+      });
+    } else {
+      Shipper.findOneAndUpdate({
+        _id: userId,
+        password: bcrypt.hashSync(newPassword, 8),
+      }).exec((err, success) => {
+        if (err) {
+          res.status(500).send({
+            success: false,
+            message: err,
+          });
+          return;
+        } else {
+          return res.status(200).send({
+            success: true,
+            message: "Success",
+          });
+        }
+      });
+    }
+  });
+};
+
 const getInfo = (req, res) => {
   const { userId } = req;
   Shipper.findOne({
@@ -352,4 +410,5 @@ module.exports = {
   updateLocationAndStatus,
   updateInformation,
   saveToken,
+  resetPassword,
 };
