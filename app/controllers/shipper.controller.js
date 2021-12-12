@@ -81,8 +81,8 @@ const resetPassword = (req, res) => {
   if (
     !newPassword ||
     !oldPassword ||
-    newPassword.trim() ||
-    oldPassword.trim()
+    !newPassword.trim() ||
+    !oldPassword.trim()
   ) {
     res.status(500).send({
       success: false,
