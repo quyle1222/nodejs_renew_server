@@ -48,7 +48,7 @@ const calculatorGoods = async (listOrderProductDTOs) => {
   let sum = 0;
   await listOrderProductDTOs.forEach((item) => {
     const { quantityProduct, finishPriceProduct } = item;
-    const totalPrice = item ? quantityProduct + finishPriceProduct : 0;
+    const totalPrice = item ? quantityProduct * finishPriceProduct : 0;
     sum += parseInt(totalPrice);
   });
   return sum;
