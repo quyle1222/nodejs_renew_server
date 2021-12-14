@@ -106,8 +106,8 @@ const createOrder = async (req, res) => {
   body.distanceBranch = distance;
   body.receivingTime = receivingTime;
   body.timingBranchToCustomer = duration;
-  body.receiverAddress = start_address;
-  body.branchAddress = end_address;
+  body.receiverAddress = end_address;
+  body.branchAddress = start_address;
   const order = new Order(body);
   try {
     order.save((err, response) => {
