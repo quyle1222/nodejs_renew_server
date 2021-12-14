@@ -184,7 +184,6 @@ const getInfo = (req, res) => {
 
 const convertToTime = (date) => {
   date = new Date(date);
-  console.log("date", date);
   return date.getHours();
 };
 
@@ -199,8 +198,6 @@ const handleStatistical = async (listOrder) => {
         const completeTimeTypeDate = convertToTime(order.completeTimeTypeDate);
         array.map((item, index) => {
           if (completeTimeTypeDate === index) {
-            console.log("completeTimeTypeDate", completeTimeTypeDate);
-
             array[index] += order.shipping_fee;
             totalShippingFee += order.shipping_fee;
             totalFoodsFee += order.goods_fee;
