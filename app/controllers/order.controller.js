@@ -118,6 +118,7 @@ const createOrder = async (req, res) => {
         });
         return;
       }
+      
       sendOrderToShipper(response);
       res.send({
         success: true,
@@ -140,7 +141,7 @@ const sendOrderToShipper = (order) => {
           const distanceShipper = await (
             await handleDirection(branch, shipper)
           )?.distance;
-          if (distanceShipper < 3000 && item?.onGPS) {
+          if (distanceShipper < 5000 && item?.onGPS) {
             arrayShipper.push(item);
           }
         }),
