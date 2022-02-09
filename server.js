@@ -27,13 +27,6 @@ db.mongoose
     console.error("Connection error", err);
     process.exit();
   });
-
-require("./app/routers/auth.routes")(app);
-require("./app/routers/file.routes")(app);
-require("./app/routers/firebase.routes")(app);
-require("./app/routers/shipper.routes")(app);
-require("./app/routers/order.routes")(app);
-
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Do an tot nghiep." });
@@ -44,3 +37,10 @@ const PORT = process.env.PORT || 8888;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+//routers
+require("./app/routers/auth.routes")(app);
+require("./app/routers/file.routes")(app);
+require("./app/routers/firebase.routes")(app);
+require("./app/routers/shipper.routes")(app);
+require("./app/routers/order.routes")(app);
