@@ -1,4 +1,3 @@
-const cloud = require("cloudinary");
 
 const dbMedia = {
   cloud_name: "thanhtu-doantotnghiep",
