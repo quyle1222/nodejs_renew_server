@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -7,7 +8,6 @@ const dbConfig = require("./app/config/db.config");
 const corsOptions = {
   origin: "http://localhost:8888",
 };
-
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+db.mongoose.set("strictQuery", false);
 db.mongoose
   .connect(`${dbConfig.DB}`, {
     useNewUrlParser: true,
@@ -44,3 +45,4 @@ require("./app/routers/file.routes")(app);
 require("./app/routers/firebase.routes")(app);
 require("./app/routers/shipper.routes")(app);
 require("./app/routers/order.routes")(app);
+

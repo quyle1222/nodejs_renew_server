@@ -1,4 +1,4 @@
-const controller = require("../controllers/firebase.controller");
+// const controller = require("../controllers/firebase.controller");
 const { authJwt } = require("../middlewares");
 const upload = require("./../middlewares/upload");
 
@@ -10,5 +10,5 @@ module.exports = function (app) {
     );
     next();
   });
-  app.post("/firebase/notification", controller.sendNotification);
+  // app.post("/firebase/notification", controller.sendNotification);
 };
