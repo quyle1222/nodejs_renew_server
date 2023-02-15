@@ -1,26 +1,26 @@
-require('dotenv').config()
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const db = require("./app/models");
+/** @format */
+
+require("dotenv").config();
+import db from "./app/models";
+import dbConfig from "./app/config/db.config";
+import { ConnectOptions } from "mongoose";
+import express from "express";
+import cors from "cors";
+import authRoutes from "./app/routers/authRoutes";
+// const bodyParser = require("body-parser");
 const app = express();
-const dbConfig = require("./app/config/db.config");
 const corsOptions = {
   origin: "http://localhost:8888",
 };
 app.use(cors(corsOptions));
-// parse requests of content-type - application/json
 app.use(express.json());
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 db.mongoose.set("strictQuery", false);
+
 db.mongoose
-  .connect(`${dbConfig.DB}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(dbConfig.DB)
   .then(() => {
     console.log("Successfully connect to MongoDB.");
   })
@@ -28,7 +28,6 @@ db.mongoose
     console.error("Connection error", err);
     process.exit();
   });
-// simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Do an tot nghiep." });
 });
@@ -40,9 +39,8 @@ app.listen(PORT, () => {
 });
 
 //routers
-require("./app/routers/auth.routes")(app);
-require("./app/routers/file.routes")(app);
-require("./app/routers/firebase.routes")(app);
-require("./app/routers/shipper.routes")(app);
-require("./app/routers/order.routes")(app);
-
+authRoutes(app);
+// require("./app/routers/file.routes")(app);
+// require("./app/routers/firebase.routes")(app);
+// require("./app/routers/shipper.routes")(app);
+// require("./app/routers/order.routes")(app);
