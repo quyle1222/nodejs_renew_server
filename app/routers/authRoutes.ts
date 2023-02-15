@@ -19,6 +19,4 @@ export default (app: Application) => {
   );
 
   app.post("/api/auth/login", [], login);
-
-  // app.post("/api/auth/login", signin);
 };

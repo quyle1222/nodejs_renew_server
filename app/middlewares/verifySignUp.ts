@@ -10,7 +10,6 @@ const checkDuplicateUsernameOrEmail = (
 ) => {
   const { body } = req;
   const { username } = body;
-  // Email
   table.user
     .findOne({
       username,

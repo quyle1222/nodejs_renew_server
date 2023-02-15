@@ -5,13 +5,13 @@ import { IUser } from "./user.model";
 
 mongoose.Promise = global.Promise;
 
-interface Table {
+interface ITable {
   mongoose: Mongoose;
   shipper: Model<any>;
   order: Model<any>;
   user: Model<IUser>;
 }
-const table: Table = {
+const table: ITable = {
   mongoose: mongoose,
   shipper: require("./shipper.model"),
   order: require("./order.model"),

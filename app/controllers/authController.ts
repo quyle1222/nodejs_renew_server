@@ -20,7 +20,6 @@ const signup = (request: Request, response: Response) => {
         table.user
           .create({ username, password: bcrypt.hashSync(password, 8) })
           .then((result) => {
-            console.log("Result", result._id.toJSON());
             response.status(200).send({
               success: true,
               data: {
@@ -66,7 +65,7 @@ const login = (request: Request, response: Response) => {
           });
         }
         const token = jwt.sign({ id: user.id }, authConfig.secret, {
-          expiresIn: 86400, // 24 hours
+          expiresIn: 86400,
         });
         response.status(200).send({
           success: true,
